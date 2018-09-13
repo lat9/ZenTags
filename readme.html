@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Zen Cart &quot;Tag Cloud&quot; (and more)</title>
+
+<style type="text/css">
+<!--
+a, a:active, a:visited { color: #006666; text-decoration: none; }
+a:hover { color:#00CC99; text-decoration: underline; }
+body, p, h1, h2, h3, h4, h5, h6, li, td, dd, img, dt, pre, table { font-family: verdana, avantgarde, tahoma, arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
+h1, h2, h3, h4 { font-weight: bold; padding: 5px; border: 1px solid #666; }
+h1 { font-size: 20px; background-color: #3ea99f; }
+h2 { font-size: 16px; background-color: #43bfc7; }
+h3, .tableHead { background-color: #48cccd; }
+h4 { background-color: #81d8d0;}
+ol li { margin-left: 0; }
+img { margin: 0 20px 0 0; float: left; }
+table, td, th { border: 1px solid black; border-collapse: collapse; }
+.corefile, .change { color: red; }
+.added { color: blue; }
+.removed { text-decoration: line-through; }
+.osh, .ajax { color: blue; }
+.minspacing li { margin: 0; }
+.smallimg { float: left; width: auto; margin: 0.5% 0.25% 0.25% auto; }
+ol li, ul li { margin-top: 5px; margin-bottom: 5px; }
+ul li ul { padding-left: 0; }
+td, th { padding: 5px; }
+.table { display: table; padding-left: 0.5%; font-size: smaller; }
+.head_outer, .item_outer { display: table-row; }
+.thead, .item { display: table-cell; padding: 0.25% 0.25%;}
+.thead { font-weight: bold; }
+.table ul { list-style-type: none; padding-left: 0; margin: 0; }
+.table ul li { margin: 0; }
+.c1 { text-align: left; font-weight: bold; width: 15%; color: #333333; }
+.c3 { vertical-align: top; }
+.back { float: left; }
+.forward { float: right; }
+.clearBoth { clear: both; }
+#table_tag_mapping li { list-style-type: none; }
+#table_tag_mapping ul, #table_tag_mapping ul li { padding-left: 0; margin-left: 0; }
+#table_tags, #table_tag_mapping { margin-top: 0; }
+-->
+</style>
+</head>
+
+<body>
+<a name="top" id="top"></a>
+<h1>Zen Cart &quot;Tag Cloud&quot; and Enhanced Search Capabilities</h1>
+<h3>Version 1.0.0</h3>
+<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2018, Vinos de Frutas Tropicales.</p>
+
+<h2>Version History:</h2>
+<ul>
+  <li>v1.0.0-beta1, 2018-09-13: Initial public <em>beta</em> release.</li>
+</ul>
+
+<hr />
+<h2>What it does</h2>
+<p>This plugin provides two enhancements to the base Zen Cart functionality:</p>
+<ol>
+  <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's categories and/or products.</li>
+  <li>Modification to the Zen Cart <em>built-in</em> advanced search processing to allow searches to be performed against these tags.</li>
+</ol>
+
+<h3>Zen Tags</h3>
+<p>The <em>Zen Tags</em> functionality has been <em>heavily modelled after</em> the implementation of the similarly-named feature within a WordPress blog, providing you with another method to group your products.</p>
+<h4>Database Changes</h4>
+<p>All database changes are made automatically by an admin-level initialization script, after the installation files are copied to your store's file-system.</p>
+<p>Three new tables are provided to manage the Zen Tags.  The first (<code>tags</code>) simply associates a unique <em>tag_id</em> with each tag defined for the store.  Tags' names are alphanumeric (e.g. A-Z, 0-9) strings.  The <code>tags_to_categories</code> and <code>tags_to_products</code> tables identify the mappings between a category or product, respectively, and the store's defined <em>tags</em>.</p>
+<table id="table_tags">
+  <tr class="tableHead">
+    <th align="left">Field Name</th>
+    <th align="left">Field Description</th>
+  </tr>
+  <tr>
+    <td>tag_id</td>
+    <td>The automatically-incrementing, unique ID associated with this tag's name.</td>
+  </tr>
+  <tr>
+    <td>language_id</td>
+    <td>Currently hard-coded to 1; provided for (future) multi-language support.
+  </tr>
+  <tr>
+    <td>tag_name</td>
+    <td>The textual name of the tag.  A tag's name can contain <em>only</em> alphanumeric characters.</td>
+  </tr>
+</table>
+
+<table id="table_tag_mapping">
+  <tr class="tableHead">
+    <th align="left">Field Name</th>
+    <th align="left">Field Description</th>
+  </tr>
+  <tr>
+    <td>tag_mapping_id</td>
+    <td>The index-ID of the element being mapped via this record.  Its value depends on the table, either a <code>categories_id</code> or <code>products_id</code>.</td>
+  </tr>
+  <tr>
+    <td>tag_id</td>
+    <td>The unique ID that identifies the <code>tags</code> table name being mapped.</td>
+  </tr>
+</table>
+<p>The initialization script also creates the <em>Configuration-&gt;Category/Product Tags</em> group, allowing you to configure the store-side operation of the <em>Tag Cloud</em> sidebox.</p>
+<table id="tag_configuration">
+  <tr class="tableHead">
+    <th align="left">Field Name</th>
+    <th align="left">Field Description</th>
+  </tr>
+  <tr>
+    <td>Installed Version</td>
+    <td>Shows the current <em>Zen Tags</em> plugin version.</td>
+  </tr>
+  <tr>
+    <td>Enable on Storefront?</td>
+    <td>Identifies whether (<em>true</em>) or not (<em>false</em>, the default, <em>Zen Tags</em> is enabled on your storefront.  If set to <em>false</em>, the &quot;Tag Cloud&quot; sidebox will not display and tags will not be part of any advanced-search.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Text Size (Smallest)</td>
+    <td>Enter the text (or font) size to be used for the least-used tag.  Default: 8.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Text Size (Largest)</td>
+    <td>Enter the text (or font) size to be used for the most-used tag.  Default: 22.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Units</td>
+    <td>Enter the unit type (e.g. pt, px or em) to be used for the font-size overrides.  Default: pt.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Max Tags</td>
+    <td>Enter the maximum number of tags to be displayed within the <em>Tag Cloud</em> sidebox.  Default: 45.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Order By</td>
+    <td>Choose how the tags within the <em>Tag Cloud</em> display are to be ordered, either by <em>name</em> or usage <em>count</em>.  Default: name.</td>
+  </tr>
+  <tr>
+    <td>Tag Cloud &mdash; Sort Order</td>
+    <td>Choose how matching tags within the <em>Tag Cloud</em> are sorted, one of <em>ASC</em> or <em>DESC</em>.  Default: ASC.</td>
+  </tr>
+  <tr>
+    <td>Remove Unused Tags?</td>
+    <td>Choose whether (<em>true</em>) or not (<em>false</em>) tags that are no longer mapped to another entity (product or category) should be removed from the database.  Default: true.</td>
+  </tr>
+</table>
+<h4>Zen Cart Admin Changes</h4>
+<p>Your Zen Cart admin-console is updated to:</p>
+<ol>
+  <li>Allow <em>tag</em> entry when editing a category or a product (<em>Catalog-&gt;Categories/Products</em>).<ul>
+    <li>When you <em>add</em> a tag to a category, that tag is added to all sub-categories and products.</li>
+    <li>When you <em>remove</em> a tag from a category, that tat is removed from all sub-categories and products.</li>
+  </ul></li>
+  <li>A new (zen_tag_cloud) sidebox is available for positioning within your store (<em>Tools-&gt;Layout Boxes Controller</em>).</li>
+  <li>Configuration for the <em>Zen Cloud</em> are provided in <em>Configuration-&gt;Category/Product Tags</em>
+</ol>
+<h3>Database I/O Manager (DbIo) Integration</h3>
+<p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
+<p>The export creates a 3-column output: <code>v_products_id</code>, <code>v_products_name</code> and <code>v_products_tags</code> &mdash; the <code>v_products_tags</code> contains a <b>^</b>-separated list of current tags for the referenced product.</p>
+<p>On import, only the <code>v_products_id</code> and <code>v_products_tags</code> columns are required/used.  Leave the column empty and all tags associated with the associated product are <em>removed</em>.</p>
+<h4>Store-side Changes</h4>
+<p>This plugin provides the <em>zen_tag_cloud</em> sidebox which, if enabled, displays a collection of tags from your store's configuration.  Each tag is displayed as a link to the <code>advanced_search_result</code> page, where all products matching the selected tag are displayed.</p>
+<p><em>ZenTags</em> also enables product-searches to include products with tags that match any search <em>keywords</em>.</p>
+
+<hr />
+<h2>Installation</h2>
+<p>There are <span class="corefile">core-file overwrites</span> in the plugin, and it makes changes to your database; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  All <span class="corefile">core-file</span> modifications are marked, search for <b>-lat9</b>.</p>
+<ol>
+  <li>Copy the files to your cart's file-system, after renaming the <b>YOUR_ADMIN</b> folder to match your Zen Cart's secret admin folder:
+  <ol class="minspacing">
+    <li>/includes/auto_loaders/config.zen_tags.php</li>
+    <li>/includes/classes/ZenTags.php &mdash; used by <b>both</b> admin and storefront processing</li>
+    <li>/includes/classes/auto.zen_tags_search.php</li>
+    <li>/includes/extra_datafiles/zen_tags_database_names.php</li>
+    <li>/includes/languages/english/extra_definitions/zen_tags_extra_definitions.php</li>
+    <li>/includes/modules/sideboxes/zen_tag_cloud.php</li>
+    <li>/includes/templates/template_default/sideboxes/tpl_zen_tag_cloud.php</li>
+    <li>/YOUR_ADMIN/ajax.php &mdash; this is a copy of the storefront version, with the AJAX class path modified for use within the admin.</li>
+    <li><span class="corefile">/YOUR_ADMIN/categories.php</span></li>
+    <li><span class="corefile">/YOUR_ADMIN/product.php</span></li>
+    <li>/YOUR_ADMIN/includes/zen_tags.css</li>
+    <li>/YOUR_ADMIN/includes/auto_loaders/config.zen_tags_admin.php</li>
+    <li>/YOUR_ADMIN/includes/classes/ajax/index.html</li>
+    <li>/YOUR_ADMIN/includes/classes/ajax/zcAjaxTagManager.php</li>
+    <li>/YOUR_ADMIN/includes/classes/dbio/DbIoProductsTagsHandler.php</li>
+    <li>/YOUR_ADMIN/includes/classes/observers/ZenTagsAdminObserver.php</li>
+    <li>/YOUR_ADMIN/includes/extra_datafiles/zen_tags_admin_file_database_names.php</li>
+    <li><span class="corefile">/YOUR_ADMIN/includes/init_includes/init_admin_auth.php</span> &mdash; modifications to grant the <code>ajax.php</code> module &quot;special&quot; access, so long as an admin is logged in.</li>
+    <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
+    <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/zen_tags_extra_definitions.php</li>
+    <li>/YOUR_ADMIN/includes/languages/english/dbio/DbIoProductsTagsHandler.php</li>
+    <li>/YOUR_ADMIN/includes/javascript/ajax_tag_list.js</li>
+    <li><span class="corefile">/YOUR_ADMIN/includes/modules/category_product_listing.php</span> &mdash; adds the current tag names to the category/product listing.</li>
+    <li><span class="corefile">/YOUR_ADMIN/includes/modules/copy_to_confirm.php</span> &mdash; copies any tags associated with the &quot;source&quot; product to its duplicate.</li>
+    <li><span class="corefile">/YOUR_ADMIN/includes/modules/update_product.php</span> &mdash; updates the tag values for the product.</li>
+    <li><span class="corefile">/YOUR_ADMIN/includes/modules/product/collect_info.php</span> &mdash; gathers the current tag names.</li>
+  </ol><strong>Note:</strong> All <span class="corefile">core-file</span> changes use the like-named file from the Zen Cart v1.5.5f distribution as the basis, unless otherwise noted.</li>
+</ol>
+
+<hr />
+<h2>Un-install</h2>
+<p>Delete the new files you copied to your store's file-system and restore any backups of the core- and template-file changes, then copy and paste the contents of /zen_tags_uninstall.sql into your admin's <em>Tools-&gt;Install SQL Patches</em> to remove the plugin's database changes.</p>
+</body>
+</html>
