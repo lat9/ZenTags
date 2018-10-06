@@ -105,9 +105,13 @@
 if (defined('ZEN_TAGS_ENABLE')) {
 ?>
 <link rel="stylesheet" type="text/css" href="includes/zen_tags.css">
+<?php
+    if ((PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR) < '1.5.6') {
+?>
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <?php
-require 'includes/javascript/jscript_framework.php';
+        require DIR_FS_CATALOG . 'includes/templates/template_default/jscript/jscript_framework.php';
+    }
 }
 //-eof-zen_tags_lat9 *** 1 of 1 ***
 ?>
