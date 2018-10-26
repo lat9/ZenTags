@@ -42,7 +42,7 @@ jQuery('#zen-tags-add').on ('click', 'a', function(event)
             }
         },
     }).done(function(response) {
-        jQuery('#zen-tag-input').val('');
+        jQuery('#zen-tag-input').val('').focus();
         jQuery('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
     });
     return false;
