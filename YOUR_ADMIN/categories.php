@@ -730,7 +730,11 @@ function init()
     }
 
     $contents[] = array('text' => '<br />' . TEXT_CATEGORIES_NAME . $category_inputs_string);
-
+//-bof-zen_tags-lat9 *** 2 of 3 ***
+    $zen_tags = new ZenTags();
+    $tags_info = $zen_tags->generateCategoryTagInputs($cInfo->categories_id);
+    $contents[] = array ('text' => '<br />' . $tags_info['label'] . '&nbsp;' . $tags_info['input']);
+//-eof-zen_tags_lat9 *** 2 of 3 ***
     $category_inputs_string = '';
     for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
       $category_inputs_string .= '<br />' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;';

@@ -13,10 +13,11 @@ if (!defined ('IS_ADMIN_FLAG')) {
 class ZenTags extends base 
 {
     // -----
-    // Used to identify the different associations between the tags and products/categories.
+    // Used to identify the different associations between the tags and their "base" elements.
     //
     const TAG_MAP_PRODUCT  = 1;
     const TAG_MAP_CATEGORY = 2;
+    const TAG_MAP_NEWS     = 3;
   
     public function __construct() 
     {
@@ -125,6 +126,8 @@ class ZenTags extends base
             $tag_mapping_table = TABLE_TAGS_TO_PRODUCTS;
         } elseif ($tag_mapping_type == self::TAG_MAP_CATEGORY) {
             $tag_mapping_table = TABLE_TAGS_TO_CATEGORIES;
+        } elseif ($tag_mapping_type == self::TAG_MAP_NEWS && defined('TABLE_TAGS_TO_NEWS')) {
+            $tag_mapping_table = TABLE_TAGS_TO_NEWS;
         } else {
             trigger_error("Unknown tag-mapping-type ($tag_mapping_type).", E_USER_ERROR);
             exit;
@@ -169,7 +172,7 @@ class ZenTags extends base
                 if ($tag_mapping_table == TABLE_TAGS_TO_CATEGORIES) {
                     $sub_cats_and_products = $this->getSubCatsAndProducts((int)$tag_mapping_id);
                 }
-                $new_tags = explode(',', str_replace(' ', '', $zen_tags));
+                $new_tags = explode(',', str_replace('  ', ' ', $zen_tags));
                 foreach ($new_tags as $current_tag) {
                     $tag_id = $this->tagId($current_tag);
                     $GLOBALS['db']->Execute(
