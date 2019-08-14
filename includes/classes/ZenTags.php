@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9
-// Copyright (c) 2014-2018, Vinos de Frutas Tropicales
+// Copyright (c) 2014-2019, Vinos de Frutas Tropicales
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal Access');
@@ -25,15 +25,17 @@ class ZenTags extends base
         $this->smallestFont = (int)ZEN_TAGS_CLOUD_SMALLEST;
         $this->largestFont = (int)ZEN_TAGS_CLOUD_LARGEST;
         $this->fontUnits = ZEN_TAGS_CLOUD_UNITS;
-        $this->maxTags = ZEN_TAGS_CLOUD_MAX;
+        $this->maxTags = (int)ZEN_TAGS_CLOUD_MAX;
         $this->tagsOrderBy = ZEN_TAGS_ORDER_BY;
         $this->tagsSortOrder = ZEN_TAGS_SORT_ORDER;
     }
-  
+
     public function generateCategoryTagInputs($categories_id) 
     {
         $tag_inputs = $this->generateTagInputsProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES);
-        $tag_inputs['label'] .= ('<br /><strong>' . ZEN_TAG_LABEL_NOTE . '</strong> ' . ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS . '<br />');
+        if (is_array($tag_inputs)) {
+            $tag_inputs['label']['text'] .= ('<br /><strong>' . ZEN_TAG_LABEL_NOTE . '</strong> ' . ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS . '<br />');
+        }
         return $tag_inputs;
     }
   
@@ -79,6 +81,16 @@ class ZenTags extends base
         return $this->generateTagsListProtected((int)$tag_mapping_id, $tag_mapping_table);
     }
   
+    public function generateCategoryTagPlaceholder()
+    {
+        return $this->generateTagPlaceholder(ZEN_TAG_CREATE_CATEGORY_FIRST);
+    }
+    
+    public function generateProductTagPlaceholder()
+    {
+        return $this->generateTagPlaceholder(ZEN_TAG_CREATE_PRODUCT_FIRST);
+    }
+    
     // -----
     // Generate the common tag-input block.  Contains three separate areas:
     // 1) The tag input box, with add button.  Adds new tags (comma-separated).
@@ -87,17 +99,36 @@ class ZenTags extends base
     //
     protected function generateTagInputsProtected($tag_mapping_id, $tag_mapping_table) 
     {
-        $tag_inputs = array();
+        $tag_inputs = false;
         if (IS_ADMIN_FLAG === true) {
             $zen_tags = $this->generateTagsListProtected($tag_mapping_id, $tag_mapping_table);
             $tag_mapping_type = ($tag_mapping_table == TABLE_TAGS_TO_PRODUCTS) ? self::TAG_MAP_PRODUCT : self::TAG_MAP_CATEGORY;
-            $the_input = '<div id="zen-tags-add">' . zen_draw_input_field('zen_tags', '', 'id="zen-tag-input"') . '&nbsp;&nbsp;<div class="buttonLink"><a href="#">Add</a></div>&nbsp;&nbsp;' . ZEN_TAG_TEXT_SEPARATE_TAGS . '</div>';
-            $the_input .= zen_draw_hidden_field('tag_mapping_id', $tag_mapping_id, 'id="tag_mapping_id"') . zen_draw_hidden_field('tag_mapping_type', $tag_mapping_type, 'id="tag_mapping_type"');
+            $the_input = '<div id="zen-tags-add">' . zen_draw_input_field('zen_tags', '', 'id="zen-tag-input"') . '&nbsp;&nbsp;<button type="button">Add</button>&nbsp;&nbsp;' . ZEN_TAG_TEXT_SEPARATE_TAGS . '</div>';
+            $the_input .= zen_draw_hidden_field('tag_mapping_id', $tag_mapping_id, 'id="tag_mapping_id"');
+            $the_input .= zen_draw_hidden_field('tag_mapping_type', $tag_mapping_type, 'id="tag_mapping_type"');
             $tag_cloud = '<br /><div id="zen-tag-cloud-outer"><div id="zen-tag-cloud"><a href="#" class="choose">' . ZEN_TAG_TEXT_SHOW_MOST_USED . '</a></div></div>';
             
             $tag_inputs = array(
-                'label' => ZEN_TAG_LABEL_TAGS, 
+                'label' => array(
+                    'text' => ZEN_TAG_LABEL_TAGS,
+                    'field_name' => 'zen_tags',
+                ),
                 'input' => $the_input . '<br /><div id="zen-tags-remove-outer"><span id="zen-tags-remove_text">' . ZEN_TAG_TEXT_CLICK_TO_REMOVE . '</span><div id="zen-tags-remove">' . $zen_tags . '</div></div>' . $tag_cloud . '<script src="includes/javascript/ajax_tag_list.js"></script>'
+            );
+        }
+        return $tag_inputs;
+    }
+    
+    protected function generateTagPlaceholder($message)
+    {
+        $tag_inputs = false;
+        if (IS_ADMIN_FLAG === true) {
+            $tag_inputs = array(
+                'label' => array(
+                    'text' => ZEN_TAG_LABEL_TAGS,
+                    'field_name' => 'zen_tags',
+                ),
+                'input' => $message . zen_draw_hidden_field('zen_tags', '')
             );
         }
         return $tag_inputs;
@@ -403,13 +434,14 @@ class ZenTags extends base
         } elseif ($create !== true || IS_ADMIN_FLAG !== true) {
             $tag_id = 0;
         } else {
-          $GLOBALS['db']->Execute(
-            "INSERT INTO " . TABLE_TAGS . " 
-                (languages_id, tag_name) 
-             VALUES 
-                (1, '$tag_name')"
-          );
-          $tag_id = $GLOBALS['db']->Insert_ID();
+            $tag_name = trim($tag_name);
+            $GLOBALS['db']->Execute(
+                "INSERT INTO " . TABLE_TAGS . " 
+                    (languages_id, tag_name) 
+                 VALUES 
+                    (1, '$tag_name')"
+                );
+            $tag_id = $GLOBALS['db']->Insert_ID();
         }
         return $tag_id;
     }
@@ -494,7 +526,7 @@ class ZenTags extends base
                         ON t2p.tag_id = t.tag_id
                     LEFT JOIN " . TABLE_TAGS_TO_CATEGORIES . " t2c
                         ON t2c.tag_id = t.tag_id
-           GROUP BY t.tag_id"
+           GROUP BY t.tag_id, t.tag_name"
         );
         while (!$tag_info->EOF) {
             $tag_info->fields['count'] = $tag_info->fields['p_count'] + $tag_info->fields['c_count'];

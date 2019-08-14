@@ -1,14 +1,14 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by Cindy Merkin (lat9)
-// Copyright (c) 2014-2018 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2019 Vinos de Frutas Tropicales
 //
 class zcAjaxTagManager extends base
 {
     public function removeTag()
     {
         $zen_tags = new ZenTags();
-        if (isset ($_POST['tag_id'])) {
+        if (isset($_POST['tag_id'])) {
             if (preg_match('/^tag_id\[([0-9]+)\]/', $_POST['tag_id'], $matches)) {
                 if (isset($matches[1])) {
                     $zen_tags->removeTagByType($_POST['tag_mapping_id'], $matches[1], $_POST['tag_mapping_type']);

@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9 (Cindy Merkin)
-// Copyright (c) 2014-2018 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2019 Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
@@ -17,4 +17,7 @@ define('ZEN_TAG_TEXT_SHOW_MOST_USED', 'Show the most-used tags');
 define('ZEN_TAG_TEXT_HIDE_MOST_USED', 'Hide the most-used tags');
 define('ZEN_TAG_TEXT_ADD_TAG', 'Click to add this tag');
 define('ZEN_TAG_TEXT_CLICK_TO_REMOVE_TITLE', 'Click here to remove this tag');
-define('ZEN_TAG_TEXT_CLICK_TO_REMOVE', 'Click a link below to remove the associated tag: ');
+define('ZEN_TAG_TEXT_CLICK_TO_REMOVE', 'The following tags are currently defined. Click a link below to remove the associated tag: ');
+
+define('ZEN_TAG_CREATE_CATEGORY_FIRST', 'Tags can be added once the category has been created.');
+define('ZEN_TAG_CREATE_PRODUCT_FIRST', 'Tags can be added once the product has been created.');

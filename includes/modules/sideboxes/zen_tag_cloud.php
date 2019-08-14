@@ -1,7 +1,7 @@
 <?php
 /// -----
 // Part of the "Zen Tags" plugin by Cindy Merkin (lat9)
-// Copyright (c) 2014-2018 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2019 Vinos de Frutas Tropicales
 //
 require $template->get_template_dir('tpl_zen_tag_cloud.php', DIR_WS_TEMPLATE, $current_page_base, 'sideboxes') . '/tpl_zen_tag_cloud.php';
 if ($content != '') {

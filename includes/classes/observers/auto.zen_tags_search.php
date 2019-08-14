@@ -1,7 +1,7 @@
 <?php
 // -----
-// Part of the "Zen Tags" plugin for Zen Cart v1.5.5
-// Copyright (C) 2018, Vinos de Frutas Tropicales (lat9)
+// Part of the "Zen Tags" plugin for Zen Cart v1.5.6 (and later)
+// Copyright (C) 2018-2019, Vinos de Frutas Tropicales (lat9)
 // @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
 //
 class zcObserverZenTagsSearch extends base 
@@ -11,19 +11,21 @@ class zcObserverZenTagsSearch extends base
         if (defined('ZEN_TAGS_ENABLE') && ZEN_TAGS_ENABLE == 'true') {
             $this->tID = (isset($_GET['tID']) && ((int)$_GET['tID']) > 0) ? ((int)$_GET['tID']) : false;
             $this->order_by = '';
-            $this->attach(
-                $this, 
-                array(
-                    'NOTIFY_SEARCH_ORDERBY_STRING',
-                    'NOTIFY_SEARCH_FROM_STRING',
-                    'NOTIFY_SEARCH_WHERE_STRING',
-                    'NOTIFY_SEARCH_SELECT_STRING'
-                )
-            );
+            if ($this->tID !== false || (defined('ZEN_TAGS_SEARCH_ALWAYS') && ZEN_TAGS_SEARCH_ALWAYS == 'true')) {
+                $this->attach(
+                    $this, 
+                    array(
+                        'NOTIFY_SEARCH_ORDERBY_STRING',
+                        'NOTIFY_SEARCH_FROM_STRING',
+                        'NOTIFY_SEARCH_WHERE_STRING',
+                        'NOTIFY_SEARCH_SELECT_STRING'
+                    )
+                );
+            }
         }
     }
 
-    public function update (&$class, $eventID) 
+    public function update(&$class, $eventID) 
     {
         switch ($eventID) {
             case 'NOTIFY_SEARCH_SELECT_STRING':

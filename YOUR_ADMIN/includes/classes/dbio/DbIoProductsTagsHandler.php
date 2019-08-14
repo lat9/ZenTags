@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the ZenTags plugin, created by Cindy Merkin (cindy@vinosdefrutastropicales.com)
-// Copyright (c) 2018, Vinos de Frutas Tropicales.
+// Copyright (c) 2018-2019, Vinos de Frutas Tropicales.
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal access');
@@ -76,6 +76,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
             'products_tags' => self::DBIO_SPECIAL_IMPORT,
         );
         $this->config['export_order_by_clause'] = 'pd.products_name ASC';
+        $this->config['export_where_clause'] = '';
     }
     
     // -----
