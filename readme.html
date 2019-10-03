@@ -54,16 +54,16 @@ td, th { padding: 5px; }
 
 <hr />
 <h2>What it does</h2>
-<p>This plugin provides enhancements to the base Zen Cart functionality:</p>
+<p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.6 and later:</p>
 <ol>
-  <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's categories and products.</li>
+  <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's products.</li>
   <li>Modification to the Zen Cart <em>built-in</em> advanced search processing to allow searches to be performed against these tags.</li>
 </ol>
 
 <h3>Zen Tags</h3>
 <p>The <em>Zen Tags</em> functionality has been <em>heavily modelled after</em> the implementation of the similarly-named feature within a WordPress blog, providing you with another method to group your products.</p>
 <h4>Database Changes</h4>
-<p>All database changes are made automatically by an admin-level initialization script, after the installation files are copied to your store's file-system.</p>
+<p>All database changes are made automatically by an admin-level initialization script, after the plugin's installation files are copied to your store's file-system.</p>
 
 <h5>Added Database Tables</h5>
 <p>Three new tables are provided to manage the Zen Tags.  The first (<code>tags</code>) simply associates a unique <em>tag_id</em> with each tag defined for the store.  Tags' names are alphanumeric (e.g. A-Z, 0-9) strings.  The <code>tags_to_categories</code> and <code>tags_to_products</code> tables identify the mappings between a category or product, respectively, and the store's defined <em>tags</em>.</p>
@@ -155,11 +155,12 @@ td, th { padding: 5px; }
 <p>Your Zen Cart admin-console is updated to:</p>
 <ol>
   <li>Allow <em>tag</em> entry when editing a category or a product (<em>Catalog-&gt;Categories/Products</em>).<ul>
-    <li>When you <em>add</em> a tag to a category, that tag is added to <em>all</em> sub-categories and products.</li>
-    <li>When you <em>remove</em> a tag from a category, that tat is removed from all sub-categories and products.</li>
+    <li>When you <em>add</em> a tag to a category, that tag is added to <em>all</em> sub-categories and products in that category.</li>
+    <li>When you <em>remove</em> a tag from a category, that tag is removed from all sub-categories and products in that category.</li>
+    <li>When you <em>add</em> or <em>remove</em> a tag from a product, that tag is added/removed from that single product.</li>
   </ul></li>
   <li>A new (zen_tag_cloud) sidebox is available for positioning within your store (<em>Tools-&gt;Layout Boxes Controller</em>).</li>
-  <li>Configuration for the <em>Zen Cloud</em> are provided in <em>Configuration-&gt;Category/Product Tags</em>
+  <li>Configuration for the <em>Zen Tag Cloud</em> are provided in <em>Configuration-&gt;Category/Product Tags</em>
 </ol>
 <h3>Database I/O Manager (DbIo) Integration</h3>
 <p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
@@ -174,7 +175,7 @@ td, th { padding: 5px; }
 <p>There are <span class="corefile">core-file overwrites</span> in the plugin, and it makes changes to your database; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  All <span class="corefile">core-file</span> modifications are marked, search for <b>-lat9</b>.</p>
 <p>References to files in the <code>YOUR_ADMIN</code> directory identify changes to be made in files associated with your Zen Cart's &quot;secret admin directory&quot;.  Unless otherwise noted, <span class="corefile">core file</span> changes use the like-named file from the Zen Cart 1.5.6c distribution as the change-basis.  Each of those changes is the addition of a notification that is currently &quot;in-core&quot; for zc157 and later!</p>
 <ol>
-  <li>If you are running a variant of zc156, for each of the <span class="corefile">core files</span> listed below, compare the contents of your <em>current</em> version of the file, merging any changes required by this plugin.<ol>
+  <li>If you are running a variant of zc156, for each of the <span class="corefile">core files</span> listed below, compare the contents of your <em>current</em> version of the file, merging any changes required by this plugin. Each of the file changes is simply the inclusion of a notification (submitted and now present for zc157 and later) used by the plugin's admin-level observer:<ol>
     <li><span class="corefile">/zc156/YOUR_ADMIN/categories.php</span> &mdash; gathers and updates any category-specific tag names via an AJAX &quot;helper&quot;.</li>
     <li><span class="corefile">/zc156/YOUR_ADMIN/includes/modules/copy_product_confirm.php</span> &mdash; copies any tags associated with the &quot;source&quot; product to its duplicate.</li>
     <li><span class="corefile">/zc156/YOUR_ADMIN/includes/modules/product/collect_info.php</span> &mdash; gathers and updates any product-specific tag names via an AJAX &quot;helper&quot;.</li>

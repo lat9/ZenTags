@@ -325,20 +325,6 @@ for ($i = 0, $n = sizeof($tax_class_array); $i < $n; $i++) {
           <?php echo zen_draw_pull_down_menu('products_tax_class_id', $tax_class_array, $pInfo->products_tax_class_id, 'onchange="updateGross()" class="form-control"'); ?>
       </div>
     </div>
-<?php
-//-bof-posm_price_weight-lat9  *** 1 of 2 ***
-    if (function_exists('posmpw_price_weight_managed') && posmpw_price_weight_managed($pInfo->products_id)) {
-?>
-    <div class="form-group">
-        <?php echo zen_draw_label(POSMPW_TEXT_PRODUCTS_PRICE_CLICK, 'products_price', 'class="col-sm-3 control-label"'); ?>
-        <div class="col-sm-9 col-md-6">
-            <a href="<?php echo zen_href_link(FILENAME_PRODUCTS_OPTIONS_STOCK, 'pID=' . $pInfo->products_id); ?>" class="btn btn-default" role="button"><?php echo POSMPW_ALT_MANAGE_PRICES; ?></a>
-            <?php echo zen_draw_hidden_field('products_price', '0', 'id="products_price"') . zen_draw_hidden_field('products_price_gross', '0'); ?>
-        </div>
-    </div>
-<?php
-    } else {
-?>
     <div class="form-group">
         <?php echo zen_draw_label(TEXT_PRODUCTS_PRICE_NET, 'products_price', 'class="col-sm-3 control-label"'); ?>
       <div class="col-sm-9 col-md-6">
@@ -351,10 +337,6 @@ for ($i = 0, $n = sizeof($tax_class_array); $i < $n; $i++) {
           <?php echo zen_draw_input_field('products_price_gross', $pInfo->products_price, 'onkeyup="updateNet()" class="form-control"'); ?>
       </div>
     </div>
-<?php
-    }
-//-eof-posm_price_weight-lat9  *** 1 of 2 ***
-?>
   </div>
   <script>
     updateGross();
@@ -507,30 +489,12 @@ for ($i = 0, $n = sizeof($tax_class_array); $i < $n; $i++) {
       ?>
     </div>
   </div>
-<?php
-//-bof-posm_price_weight-lat9  *** 2 of 2 ***
-    if (function_exists('posmpw_price_weight_managed') && posmpw_price_weight_managed($pInfo->products_id)) {
-?>
-   <div class="form-group">
-      <?php echo zen_draw_label(POSMPW_TEXT_PRODUCTS_WEIGHT_CLICK, 'products_weight', 'class="col-sm-3 control-label"'); ?>
-      <div class="col-sm-9 col-md-6">
-          <a href="<?php echo zen_href_link(FILENAME_PRODUCTS_OPTIONS_STOCK, 'pID=' . $pInfo->products_id); ?>" class="btn btn-default" role="button"><?php echo POSMPW_ALT_MANAGE_WEIGHTS; ?></a>
-          <?php echo zen_draw_hidden_field('products_weight', '0', 'id="products_weight"'); ?>
-      </div>
-  </div>
-<?php
-    } else {
-?>
   <div class="form-group">
       <?php echo zen_draw_label(TEXT_PRODUCTS_WEIGHT, 'products_weight', 'class="col-sm-3 control-label"'); ?>
     <div class="col-sm-9 col-md-6">
         <?php echo zen_draw_input_field('products_weight', $pInfo->products_weight, 'class="form-control"'); ?>
     </div>
   </div>
-<?php
-    }
-//-eof-posm_price_weight-lat9  *** 2 of 2 ***
-?>
   <div class="form-group">
       <?php echo zen_draw_label(TEXT_PRODUCTS_SORT_ORDER, 'products_sort_order', 'class="col-sm-3 control-label"'); ?>
     <div class="col-sm-9 col-md-6">
