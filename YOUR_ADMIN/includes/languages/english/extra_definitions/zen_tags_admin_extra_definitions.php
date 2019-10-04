@@ -7,7 +7,8 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('BOX_CONFIGURATION_ZEN_TAGS', 'Product/Category Tags');
+define('BOX_CONFIGURATION_ZEN_TAGS', 'Zen Product Tags');
+
 define('ZEN_TAG_LABEL_TAGS', 'Tags:');
 define('ZEN_TAG_LABEL_NOTE', 'Note:');
 define('ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS', 'Adding or removing a category tag will cause that tag to be added or removed from all sub-categories and included products!');
@@ -21,3 +22,6 @@ define('ZEN_TAG_TEXT_CLICK_TO_REMOVE', 'The following tags are currently defined
 
 define('ZEN_TAG_CREATE_CATEGORY_FIRST', 'Tags can be added once the category has been created.');
 define('ZEN_TAG_CREATE_PRODUCT_FIRST', 'Tags can be added once the product has been created.');
+
+define('ZEN_TAG_INSTALLED', 'ZenTags, v%s, was successfully installed.');
+define('ZEN_TAG_UPDATED', 'ZenTags was successfully updated to v%s.');

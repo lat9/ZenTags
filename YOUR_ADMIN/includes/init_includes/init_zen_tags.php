@@ -150,8 +150,15 @@ if (ZEN_TAGS_VERSION != ZEN_TAGS_CURRENT_VERSION) {
     
     $db->Execute(
         "UPDATE " . TABLE_CONFIGURATION . " 
-            SET configuration_value = '" . ZEN_TAGS_CURRENT_VERSION . "' 
+            SET configuration_value = '" . ZEN_TAGS_CURRENT_VERSION . "',
+                last_modified = now()
           WHERE configuration_key = 'ZEN_TAGS_VERSION' 
           LIMIT 1"
     );
+    
+    if (ZEN_TAGS_VERSION == '0.0.0') {
+        $messageStack->add_session(sprintf(ZEN_TAG_INSTALLED, ZEN_TAGS_CURRENT_VERSION), 'success');
+    } else {
+        $messageStack->add_session(sprintf(ZEN_TAG_UPDATED, ZEN_TAGS_CURRENT_VERSION), 'success');
+    }
 }
