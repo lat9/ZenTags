@@ -6,7 +6,7 @@
 // -----
 // This language constant is used as the heading for the zen_tag_cloud sidebox.
 //
-define('ZEN_TAG_HEADING_TAG_CLOUD', 'Tag Cloud');
+define('ZEN_TAG_HEADING_TAG_CLOUD', 'Product Tag Cloud');
 
 // -----
 // This language constant is used on the advanced_search_results page when the search
