@@ -92,7 +92,6 @@ class ZenTagsAdminObserver extends base
             // - $p1 ... (r/o) A copy of the current product's $pInfo object.
             // - $p2 ... (r/w) A reference to the $extra_product_inputs array.
             //
-            //
             case 'NOTIFY_ADMIN_PRODUCT_COLLECT_INFO_EXTRA_INPUTS':
                 if (isset($p1->products_id)) {
                     $extra_product_inputs = $zen_tags->generateProductTagInputs($p1->products_id);

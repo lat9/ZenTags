@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
-<title>Zen Cart &quot;Tag Cloud&quot; (and more)</title>
+<title>Zen Cart Products' &quot;Tag Cloud&quot; (and more)</title>
 
 <style type="text/css">
 <!--
@@ -48,7 +48,7 @@ td, th { padding: 5px; }
 
 <body>
 <a name="top" id="top"></a>
-<h1>Zen Cart &quot;Tag Cloud&quot; and Enhanced Search Capabilities</h1>
+<h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.6 and later)</h1>
 <h3>Version 1.0.0</h3>
 <p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2019, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 
@@ -160,7 +160,7 @@ td, th { padding: 5px; }
     <li>When you <em>add</em> or <em>remove</em> a tag from a product, that tag is added/removed from that single product.</li>
   </ul></li>
   <li>A new (zen_tag_cloud) sidebox is available for positioning within your store (<em>Tools-&gt;Layout Boxes Controller</em>).</li>
-  <li>Configuration for the <em>Zen Tag Cloud</em> are provided in <em>Configuration-&gt;Category/Product Tags</em>
+  <li>Configuration for the <em>Zen Tag Cloud</em> are provided in <em>Configuration-&gt;Zen Product Tags</em>
 </ol>
 <h3>Database I/O Manager (DbIo) Integration</h3>
 <p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
@@ -199,13 +199,13 @@ td, th { padding: 5px; }
     <li>/YOUR_ADMIN/includes/languages/english/dbio/DbIoProductsTagsHandler.php</li>
     <li>/YOUR_ADMIN/includes/javascript/ajax_tag_list.js</li>
   </ol></li>
-  <li>Log into your Zen Cart admin console (or refresh the screen if you are already logged-in) to view the plugin's <em><b>Configuration-&gt;Category/Product Tags</b></em> settings.</li>
+  <li>Log into your Zen Cart admin console (or refresh the screen if you are already logged-in) to view the plugin's <em><b>Configuration-&gt;Zen Product Tags</b></em> settings.</li>
   <li>If you plan to use the &quot;Tag Cloud&quot; sidebox, navigate to your admin's <em><b>Tools->Layout Boxes Controller</b></em> to enable and position that sidebox.</li>
 </ol>
 
 <hr />
 <h2>Un-install</h2>
-<p>Delete the new files you copied to your store's file-system and restore any backups of the core- and template-file changes, then copy and paste the contents of /zen_tags_uninstall.sql into your admin's <em>Tools-&gt;Install SQL Patches</em> to remove the plugin's database changes.</p>
+<p>Delete the <b>new</b> files you copied to your store's file-system, then copy and paste the contents of /zen_tags_uninstall.sql into your admin's <em>Tools-&gt;Install SQL Patches</em> to remove the plugin's database changes.  Note that since the <span class="corefile">core-file</span> admin changes can safely be left, since those changes are each the inclusion of a notification only.</p>
 
 <hr />
 <h2>Version History:</h2>
