@@ -48,10 +48,10 @@ td, th { padding: 5px; }
 </head>
 
 <body>
-<a name="top" id="top"></a>
 <h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.6 and later)</h1>
 <h3>Version 1.0.0</h3>
 <p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2019, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
+<p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
 <hr />
 <h2>What it does</h2>
@@ -60,9 +60,8 @@ td, th { padding: 5px; }
   <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's products.</li>
   <li>Modification to the Zen Cart <em>built-in</em> advanced search processing to allow searches to be performed against these tags.</li>
 </ol>
-
-<h3>Zen Tags</h3>
 <p>The <em>Zen Tags</em> functionality has been <em>heavily modelled after</em> the implementation of the similarly-named feature within a WordPress blog, providing you with another method to group your products.</p>
+
 <h4>Database Changes</h4>
 <p>All database changes are made automatically by an admin-level initialization script, after the plugin's installation files are copied to your store's file-system.</p>
 
@@ -167,7 +166,8 @@ td, th { padding: 5px; }
 <p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
 <p>The export creates a 3-column output: <code>v_products_id</code>, <code>v_products_name</code> and <code>v_products_tags</code> &mdash; the <code>v_products_tags</code> contains a <b>^</b>-separated list of current tags for the referenced product.</p>
 <p>On import, only the <code>v_products_id</code> and <code>v_products_tags</code> columns are required/used.  Leave the <code>v_products_tags</code> column empty and <b>all</b> tags associated with the associated product are <em>removed</em>.</p>
-<h4>Store-side Changes</h4>
+
+<h4>Storefront Changes</h4>
 <p>This plugin provides the <em>zen_tag_cloud</em> sidebox which, if enabled, displays a collection of tags from your store's configuration.  Each tag is displayed as a link to the <code>advanced_search_result</code> page, where all products matching the selected tag are displayed.</p>
 <p><em>ZenTags</em> also enables product-searches to include products with tags that match any search <em>keywords</em>.</p>
 
@@ -211,10 +211,11 @@ td, th { padding: 5px; }
 <hr />
 <h2>Version History:</h2>
 <ul>
-  <li>v1.0.0-beta1, 2018-10-30: Initial public <em>beta</em> release.</li>
+  <li>v1.0.0, 2019-10-05: Initial release.</li>
   <li>v1.0.0-beta3, 2019-08-13:<ol>
     <li>Various updates, using zc156c as the core-file change basis.  If you are an &quot;early-adopter&quot;, please consider that all files have changed somewhat.</li>
   </ol></li>
+  <li>v1.0.0-beta1, 2018-10-30: Initial public <em>beta</em> release.</li>
 </ul>
 
 </body>
