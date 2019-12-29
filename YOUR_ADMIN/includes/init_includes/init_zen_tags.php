@@ -14,8 +14,8 @@ if (empty($_SESSION['admin_id'])) {
     return;
 }
 
-define ('ZEN_TAGS_CURRENT_VERSION', '1.0.0');
-define ('ZEN_TAGS_LAST_UPDATE_DATE', '2019-10-05');
+define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1-beta1');
+define ('ZEN_TAGS_LAST_UPDATE_DATE', '2019-12-29');
 
 // -----
 // Create the configuration group and associated items to allow the configuration of the "Tag Cloud" sidebox.
