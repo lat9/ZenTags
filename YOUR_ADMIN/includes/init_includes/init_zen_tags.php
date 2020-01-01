@@ -14,7 +14,7 @@ if (empty($_SESSION['admin_id'])) {
     return;
 }
 
-define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1-beta2');
+define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1');
 define ('ZEN_TAGS_LAST_UPDATE_DATE', '2020-01-01');
 
 // -----
