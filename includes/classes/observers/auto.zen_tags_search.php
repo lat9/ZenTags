@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin for Zen Cart v1.5.6 (and later)
-// Copyright (C) 2018-2019, Vinos de Frutas Tropicales (lat9)
+// Copyright (C) 2018-2020, Vinos de Frutas Tropicales (lat9)
 // @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
 //
 class zcObserverZenTagsSearch extends base 
@@ -52,8 +52,9 @@ class zcObserverZenTagsSearch extends base
                 break;
                 
             case 'NOTIFY_SEARCH_FROM_STRING':
-                $GLOBALS['from_str'] = $this->insertAfter($GLOBALS['from_str'], ' c,', ' ' . TABLE_TAGS . ' t, ');
+//                $GLOBALS['from_str'] = $this->insertAfter($GLOBALS['from_str'], ' c,', ' ' . TABLE_TAGS . ' t, ');
                 $GLOBALS['from_str'] .= PHP_EOL . "LEFT JOIN " . TABLE_TAGS_TO_PRODUCTS . ' t2p ON t2p.tag_mapping_id = p.products_id ';
+                $GLOBALS['from_str'] .= PHP_EOL . "LEFT JOIN " . TABLE_TAGS . ' t ON t.tag_id = t2p.tag_id ';
                 break;
                 
             case 'NOTIFY_SEARCH_WHERE_STRING':

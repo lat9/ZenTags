@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9 (Cindy Merkin)
-// Copyright (c) 2014-2019 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2020 Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
@@ -14,8 +14,8 @@ if (empty($_SESSION['admin_id'])) {
     return;
 }
 
-define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1-beta1');
-define ('ZEN_TAGS_LAST_UPDATE_DATE', '2019-12-29');
+define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1-beta2');
+define ('ZEN_TAGS_LAST_UPDATE_DATE', '2020-01-01');
 
 // -----
 // Create the configuration group and associated items to allow the configuration of the "Tag Cloud" sidebox.

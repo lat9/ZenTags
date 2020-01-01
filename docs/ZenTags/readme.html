@@ -50,7 +50,7 @@ td, th { padding: 5px; }
 <body>
 <h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.6 and later)</h1>
 <h3>Version 1.0.1</h3>
-<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2019, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
+<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2020, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
 <hr />
@@ -211,8 +211,9 @@ td, th { padding: 5px; }
 <hr />
 <h2>Version History:</h2>
 <ul>
-  <li>v1.0.1, 2019-12-29<ul>
+  <li>v1.0.1, 2020-01-01<ul>
     <li>BUGFIX: Correct MySQL error on <code>advanced_search_results</code> page when sub-categories are included.</li>
+    <li>BUGFIX: Correct &quot;no search results returned&quot; when no tags are defined.</li>
     <li>The following files were changed:<ol>
         <li>/includes/classes/observers/auto.zen_tags_search.php</li>
         <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
