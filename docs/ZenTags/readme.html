@@ -214,8 +214,10 @@ td, th { padding: 5px; }
   <li>v1.0.1, 2020-01-01<ul>
     <li>BUGFIX: Correct MySQL error on <code>advanced_search_results</code> page when sub-categories are included.</li>
     <li>BUGFIX: Correct &quot;no search results returned&quot; when no tags are defined.</li>
+    <li>BUGFIX: Don't display &quot;Tag Cloud&quot; sidebox if no tags are defined.</li>
     <li>The following files were changed:<ol>
         <li>/includes/classes/observers/auto.zen_tags_search.php</li>
+        <li>/includes/templates/template_default/sideboxes/tpl_zen_tag_cloud.php</li>
         <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
     </ol></li>
   </ul></li>
