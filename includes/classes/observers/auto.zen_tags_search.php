@@ -67,26 +67,27 @@ class zcObserverZenTagsSearch extends base
 
     protected function updateWhereClause(string $keyword_string, bool $use_p2c = true): string
     {
-        if ($this->tID !== 0) {
-            $where_clause = " AND t2p.tag_id = {$this->tID})";
-        } else {
-            // -----
-            // While the main search page includes the products_to_categories and categories
-            // tables in its search, the Bootstrap Ajax search doesn't.
-            //
-            $p2c_clause = '';
-            if ($use_p2c === true) {
-                $p2c_clause = ' AND p.products_id = p2c.products_id AND p2c.categories_id = c.categories_id ';
-            }
-            $where_clause = ' OR
+        // -----
+        // While the main search page includes the products_to_categories and categories
+        // tables in its search, the Bootstrap Ajax search doesn't.
+        //
+        $p2c_clause = '';
+        if ($use_p2c === true) {
+            $p2c_clause = ' AND p.products_id = p2c.products_id AND p2c.categories_id = c.categories_id ';
+        }
+
+        $where_clause = ' OR
                 (
                         p.products_status = 1
                     AND p.products_id = pd.products_id
                     AND pd.language_id = ' . (int)$_SESSION['languages_id'] .
-                    $p2c_clause . '
-                    AND t.tag_id = t2p.tag_id ' . zen_build_keyword_where_clause(['t.tag_name'], $keyword_string) .
-                ')';
+                    $p2c_clause;
+
+        if ($this->tID !== 0) {
+            $where_clause .= " AND t2p.tag_id = {$this->tID} AND t2p.tag_mapping_id = p.products_id";
+        } else {
+            $where_clause .= ' AND t.tag_id = t2p.tag_id ' . zen_build_keyword_where_clause(['t.tag_name'], $keyword_string);
         }
-        return $where_clause;
+        return $where_clause . ')';
     }
 }
