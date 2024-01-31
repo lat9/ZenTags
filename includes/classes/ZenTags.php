@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9
-// Copyright (c) 2014-2019, Vinos de Frutas Tropicales
+// Copyright (c) 2014-2024, Vinos de Frutas Tropicales
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal Access');
@@ -10,7 +10,7 @@ if (!defined ('IS_ADMIN_FLAG')) {
 // -----
 // Zen Cart Tags
 //
-class ZenTags extends base 
+class ZenTags extends base
 {
     // -----
     // Used to identify the different associations between the tags and their "base" elements.
@@ -18,10 +18,20 @@ class ZenTags extends base
     const TAG_MAP_PRODUCT  = 1;
     const TAG_MAP_CATEGORY = 2;
     const TAG_MAP_NEWS     = 3;
-  
-    public function __construct() 
+
+    protected bool $removeUnusedTags;
+    protected int $smallestFont;
+    protected int $largestFont;
+    protected string $fontUnits;
+    protected int $maxTags;
+    protected string $tagsOrderBy;
+    protected string $tagsSortOrder;
+    protected array $tags;
+    protected $font_increment;
+
+    public function __construct()
     {
-        $this->removeUnusedTags = (ZEN_TAGS_REMOVE_IF_NOT_USED == 'true');
+        $this->removeUnusedTags = (ZEN_TAGS_REMOVE_IF_NOT_USED === 'true');
         $this->smallestFont = (int)ZEN_TAGS_CLOUD_SMALLEST;
         $this->largestFont = (int)ZEN_TAGS_CLOUD_LARGEST;
         $this->fontUnits = ZEN_TAGS_CLOUD_UNITS;
@@ -30,57 +40,57 @@ class ZenTags extends base
         $this->tagsSortOrder = ZEN_TAGS_SORT_ORDER;
     }
 
-    public function generateCategoryTagInputs($categories_id) 
+    public function generateCategoryTagInputs($categories_id)
     {
         $tag_inputs = $this->generateTagInputsProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES);
         if (is_array($tag_inputs)) {
-            $tag_inputs['label']['text'] .= ('<br /><strong>' . ZEN_TAG_LABEL_NOTE . '</strong> ' . ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS . '<br />');
+            $tag_inputs['label']['text'] .= ('<br><strong>' . ZEN_TAG_LABEL_NOTE . '</strong> ' . ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS . '<br>');
         }
         return $tag_inputs;
     }
-  
-    public function updateCategoryTagInputs($categories_id) 
+
+    public function updateCategoryTagInputs($categories_id)
     {
         $this->updateTagInputsProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES);
         return;
     }
-  
-    public function generateProductTagInputs($products_id) 
+
+    public function generateProductTagInputs($products_id)
     {
         return $this->generateTagInputsProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS);
     }
-  
-    public function updateProductTagInputs($products_id) 
+
+    public function updateProductTagInputs($products_id)
     {
         $this->updateTagInputsProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS);
         return;
     }
-    
+
     public function duplicateProductTagInputs($source_products_id, $dup_products_id)
     {
         $this->updateTagInputsProtected((int)$dup_products_id, TABLE_TAGS_TO_PRODUCTS, $this->getProductTagList($source_products_id));
         return;
     }
-    
+
     public function generateTagInputs($tag_mapping_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
         return $this->generateTagInputsProtected((int)$tag_mapping_id, $tag_mapping_table);
     }
-    
+
     public function updateTagInputs($tag_mapping_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
         $this->updateTagInputsProtected((int)$tag_mapping_id, $tag_mapping_table);
         return;
     }
-    
+
     public function generateTagsList($tag_mapping_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
         return $this->generateTagsListProtected((int)$tag_mapping_id, $tag_mapping_table);
     }
-  
+
     public function generateCategoryTagPlaceholder()
     {
         return $this->generateTagPlaceholder(ZEN_TAG_CREATE_CATEGORY_FIRST);
@@ -90,14 +100,14 @@ class ZenTags extends base
     {
         return $this->generateTagPlaceholder(ZEN_TAG_CREATE_PRODUCT_FIRST);
     }
-    
+
     // -----
     // Generate the common tag-input block.  Contains three separate areas:
     // 1) The tag input box, with add button.  Adds new tags (comma-separated).
     // 2) The tag remove box, you can individually remove tags one by one.
     // 3) The tag cloud box, you can add tags to the current category/product by clicking a cloud link.
     //
-    protected function generateTagInputsProtected($tag_mapping_id, $tag_mapping_table) 
+    protected function generateTagInputsProtected($tag_mapping_id, $tag_mapping_table)
     {
         $tag_inputs = false;
         if (IS_ADMIN_FLAG === true) {
@@ -106,51 +116,50 @@ class ZenTags extends base
             $the_input = '<div id="zen-tags-add">' . zen_draw_input_field('zen_tags', '', 'id="zen-tag-input"') . '&nbsp;&nbsp;<button type="button">Add</button>&nbsp;&nbsp;' . ZEN_TAG_TEXT_SEPARATE_TAGS . '</div>';
             $the_input .= zen_draw_hidden_field('tag_mapping_id', $tag_mapping_id, 'id="tag_mapping_id"');
             $the_input .= zen_draw_hidden_field('tag_mapping_type', $tag_mapping_type, 'id="tag_mapping_type"');
-            $tag_cloud = '<br /><div id="zen-tag-cloud-outer"><div id="zen-tag-cloud"><a href="#" class="choose">' . ZEN_TAG_TEXT_SHOW_MOST_USED . '</a></div></div>';
+            $tag_cloud = '<br><div id="zen-tag-cloud-outer"><div id="zen-tag-cloud"><a href="#" class="choose">' . ZEN_TAG_TEXT_SHOW_MOST_USED . '</a></div></div>';
             
-            $tag_inputs = array(
-                'label' => array(
+            $tag_inputs = [
+                'label' => [
                     'text' => ZEN_TAG_LABEL_TAGS,
                     'field_name' => 'zen_tags',
-                ),
-                'input' => $the_input . '<br /><div id="zen-tags-remove-outer"><span id="zen-tags-remove_text">' . ZEN_TAG_TEXT_CLICK_TO_REMOVE . '</span><div id="zen-tags-remove">' . $zen_tags . '</div></div>' . $tag_cloud . '<script src="includes/javascript/ajax_tag_list.js"></script>'
-            );
+                ],
+                'input' => $the_input . '<br><div id="zen-tags-remove-outer"><span id="zen-tags-remove_text">' . ZEN_TAG_TEXT_CLICK_TO_REMOVE . '</span><div id="zen-tags-remove">' . $zen_tags . '</div></div>' . $tag_cloud . '<script src="includes/javascript/ajax_tag_list.js"></script>',
+            ];
         }
         return $tag_inputs;
     }
-    
+
     protected function generateTagPlaceholder($message)
     {
         $tag_inputs = false;
         if (IS_ADMIN_FLAG === true) {
-            $tag_inputs = array(
-                'label' => array(
+            $tag_inputs = [
+                'label' => [
                     'text' => ZEN_TAG_LABEL_TAGS,
                     'field_name' => 'zen_tags',
-                ),
-                'input' => $message . zen_draw_hidden_field('zen_tags', '')
-            );
+                ],
+                'input' => $message . zen_draw_hidden_field('zen_tags', ''),
+            ];
         }
         return $tag_inputs;
     }
-  
-    protected function generateTagsListProtected($tag_mapping_id, $tag_mapping_table) 
+
+    protected function generateTagsListProtected($tag_mapping_id, $tag_mapping_table)
     {
         $zen_tags_list = '';
         $current_tags = $GLOBALS['db']->Execute(
-            "SELECT t.tag_id, t.tag_name 
-               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm 
-              WHERE tm.tag_mapping_id = $tag_mapping_id 
-                AND tm.tag_id = t.tag_id 
+            "SELECT t.tag_id, t.tag_name
+               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm
+              WHERE tm.tag_mapping_id = $tag_mapping_id
+                AND tm.tag_id = t.tag_id
            ORDER BY t.tag_name ASC"
         );
-        while (!$current_tags->EOF) {
-            $zen_tags_list .= (' <span class="tag-list"><a id="tag_id[' . $current_tags->fields['tag_id'] . ']" title="' . ZEN_TAG_TEXT_CLICK_TO_REMOVE_TITLE . '">' . $current_tags->fields['tag_name']) . '</a></span>';
-            $current_tags->MoveNext ();
+        foreach ($current_tags as $next_tag) {
+            $zen_tags_list .= (' <span class="tag-list"><a id="tag_id[' . $next_tag['tag_id'] . ']" title="' . ZEN_TAG_TEXT_CLICK_TO_REMOVE_TITLE . '">' . $next_tag['tag_name']) . '</a></span>';
         }
         return $zen_tags_list;
     }
-    
+
     protected function sanitizeTagMappingType($tag_mapping_type)
     {
         if ($tag_mapping_type == self::TAG_MAP_PRODUCT) {
@@ -165,42 +174,40 @@ class ZenTags extends base
         }
         return $tag_mapping_table;
     }
-  
-    public function generateTagsArray($tag_mapping_id, $tag_mapping_type) 
+
+    public function generateTagsArray($tag_mapping_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
-        
-        $zen_tags_array = array();
+
+        $zen_tags_array = [];
         $current_tags = $GLOBALS['db']->Execute(
-            "SELECT t.tag_id, t.tag_name 
-               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm 
-              WHERE tm.tag_mapping_id = $tag_mapping_id 
-                AND tm.tag_id = t.tag_id 
+            "SELECT t.tag_id, t.tag_name
+               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm
+              WHERE tm.tag_mapping_id = $tag_mapping_id
+                AND tm.tag_id = t.tag_id
            ORDER BY t.tag_name ASC"
         );
-        while (!$current_tags->EOF) {
-            $zen_tags_array[] = $current_tags->fields;
-            $current_tags->MoveNext ();
-          
+        foreach ($current_tags as $next_tag) {
+            $zen_tags_array[] = $next_tag;
         }
         return $zen_tags_array;
     }
-   
+
     // -----
     // Called when an item's tags are to be updated.  The 'zen_tags' POST variable is set up in this 
     // class' generateTagInputsProtected function (above).
     //
-    protected function updateTagInputsProtected($tag_mapping_id, $tag_mapping_table, $data_override = false) 
+    protected function updateTagInputsProtected($tag_mapping_id, $tag_mapping_table, $data_override = false)
     {
         if (IS_ADMIN_FLAG === true) {
             if ($data_override === false) {
-                $zen_tags = (isset($_POST['tag_list'])) ? $_POST['tag_list'] : false;
+                $zen_tags = $_POST['tag_list'] ?? false;
             } else {
                 $zen_tags = $data_override;
             }
             if ($zen_tags !== false) {
                 $sub_cats_and_products = false;
-                if ($tag_mapping_table == TABLE_TAGS_TO_CATEGORIES) {
+                if ($tag_mapping_table === TABLE_TAGS_TO_CATEGORIES) {
                     $sub_cats_and_products = $this->getSubCatsAndProducts((int)$tag_mapping_id);
                 }
                 $new_tags = explode(',', str_replace('  ', ' ', $zen_tags));
@@ -208,8 +215,8 @@ class ZenTags extends base
                     $tag_id = $this->tagId($current_tag);
                     $GLOBALS['db']->Execute(
                         "INSERT IGNORE INTO $tag_mapping_table
-                            (tag_mapping_id, tag_id) 
-                         VALUES 
+                            (tag_mapping_id, tag_id)
+                         VALUES
                             ($tag_mapping_id, $tag_id)"
                     );
                     if (is_array($sub_cats_and_products)) {
@@ -217,8 +224,8 @@ class ZenTags extends base
                             foreach ($sub_cats_and_products['sub_cats'] as $sub_cat_id) {
                                 $GLOBALS['db']->Execute(
                                     "INSERT IGNORE INTO " . TABLE_TAGS_TO_CATEGORIES . "
-                                        (tag_mapping_id, tag_id) 
-                                     VALUES 
+                                        (tag_mapping_id, tag_id)
+                                     VALUES
                                         ($sub_cat_id, $tag_id)"
                                 );
                             }
@@ -227,8 +234,8 @@ class ZenTags extends base
                             foreach ($sub_cats_and_products['products'] as $product_id) {
                                 $GLOBALS['db']->Execute(
                                     "INSERT IGNORE INTO " . TABLE_TAGS_TO_PRODUCTS . "
-                                        (tag_mapping_id, tag_id) 
-                                     VALUES 
+                                        (tag_mapping_id, tag_id)
+                                     VALUES
                                         ($product_id, $tag_id)"
                                 );
                             }
@@ -238,71 +245,70 @@ class ZenTags extends base
             }
         }
     }
-    
+
     protected function getSubCatsAndProducts($categories_id)
     {
         global $categories_products_id_list;  //-For zen_get_categories_products_list
-        
-        $categories_products_id_list = array();
+
+        $categories_products_id_list = [];
         $products_list = zen_get_categories_products_list($categories_id, true, false);
-        $products_in_categories = (is_array($products_list)) ? $products_list : array();
+        $products_in_categories = (is_array($products_list)) ? $products_list : [];
         unset($products_list);
-        
-        $sub_cats = array();
+
+        $sub_cats = [];
         $sub_cats = zen_get_categories($sub_cats, $categories_id);
-        $sub_categories = array();
+        $sub_categories = [];
         foreach ($sub_cats as $next_cat) {
             $sub_categories[] = $next_cat['id'];
-            $categories_products_id_list = array();
+            $categories_products_id_list = [];
             $products_list = zen_get_categories_products_list($next_cat['id'], true, false);
             if (is_array($products_list)) {
                 $products_in_categories = array_merge($products_in_categories, $products_list);
             }
         }
         unset($sub_cats);
-        
-        return array(
+
+        return [
             'sub_cats' => $sub_categories,
-            'products' => $products_in_categories
-        );
+            'products' => $products_in_categories,
+        ];
     }
 
     // -----
     // Returns the tag list for the specified product.
     //
-    public function getProductTagList($products_id, $separator = ',') 
+    public function getProductTagList($products_id, $separator = ',')
     {
         return $this->getTagListProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS, (string)$separator);
     }
-   
+
     // -----
     // Returns the tag list for the specified category.
     //
-    public function getCategoryTagList($categories_id, $separator = ',') 
+    public function getCategoryTagList($categories_id, $separator = ',')
     {
         return $this->getTagListProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES, (string)$separator);
     }
-  
+
     // -----
     // Common function that retrieves the specified tag list.
     //
-    protected function getTagListProtected($tag_mapping_id, $tag_mapping_table, $separator) 
+    protected function getTagListProtected($tag_mapping_id, $tag_mapping_table, $separator)
     {
-        $tags = array();
+        $tags = [];
         $current_tags = $GLOBALS['db']->Execute(
-            "SELECT t.tag_id, t.tag_name 
-               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm 
-              WHERE tm.tag_mapping_id = $tag_mapping_id 
-                AND tm.tag_id = t.tag_id 
+            "SELECT t.tag_id, t.tag_name
+               FROM " . TABLE_TAGS . " t, $tag_mapping_table tm
+              WHERE tm.tag_mapping_id = $tag_mapping_id
+                AND tm.tag_id = t.tag_id
            ORDER BY t.tag_name ASC"
         );
-        while (!$current_tags->EOF) {
-            $tags[] = $current_tags->fields['tag_name'];
-            $current_tags->MoveNext();
+        foreach ($current_tags as $next_tag) {
+            $tags[] = $next_tag['tag_name'];
         }
         return implode($separator, $tags);
     }
-    
+
     public function removeProductTagsKeepUnused($products_id)
     {
         $this->removeProductTagsProtected($products_id, false);
@@ -315,26 +321,24 @@ class ZenTags extends base
     {
        $products_id = (int)$products_id;
         $GLOBALS['db']->Execute(
-            "DELETE
-                FROM " . TABLE_TAGS_TO_PRODUCTS . "
-               WHERE tag_mapping_id = $products_id"
+            "DELETE FROM " . TABLE_TAGS_TO_PRODUCTS . "
+              WHERE tag_mapping_id = $products_id"
         );
         if ($remove_unused === true) {
             $this->removeUnusedTagsProtected();
         }
     }
-    
+
     public function removeCategoryTags($categories_id)
     {
         $categories_id = (int)$categories_id;
         $GLOBALS['db']->Execute(
-            "DELETE
-                FROM " . TABLE_TAGS_TO_CATEGORIES . "
-               WHERE tag_mapping_id = $categories_id"
+            "DELETE FROM " . TABLE_TAGS_TO_CATEGORIES . "
+              WHERE tag_mapping_id = $categories_id"
         );
         $this->removeUnusedTagsProtected();
     }
-    
+
     public function removeTagByType($tag_mapping_id, $tag_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
@@ -357,7 +361,7 @@ class ZenTags extends base
                     );
                     unset($sub_cat_list);
                 }
-                if (is_array($sub_cats_and_products['products']) && count($sub_cats_and_products['products']) != 0) {
+                if (is_array($sub_cats_and_products['products']) && count($sub_cats_and_products['products']) !== 0) {
                     $product_list = implode(',', $sub_cats_and_products['products']);
                     $GLOBALS['db']->Execute(
                         "DELETE FROM " . TABLE_TAGS_TO_PRODUCTS . "
@@ -367,9 +371,9 @@ class ZenTags extends base
                 }
             }
         }
-        $this->removeUnusedTagsProtected();        
+        $this->removeUnusedTagsProtected();
     }
-   
+
     // -----
     // Conditionally remove any tags that currently have a usage count of 0.
     //
@@ -379,7 +383,7 @@ class ZenTags extends base
     }
     protected function removeUnusedTagsProtected($override = false, $force = false) 
     {
-        if (($override || IS_ADMIN_FLAG === true) && ($force || $this->removeUnusedTags)) {
+        if (($override !== false || IS_ADMIN_FLAG === true) && ($force !== false || $this->removeUnusedTags)) {
             $GLOBALS['db']->Execute(
                 "DELETE FROM " . TABLE_TAGS . "
                   WHERE tag_id NOT IN (SELECT " . TABLE_TAGS_TO_PRODUCTS . ".tag_id FROM " . TABLE_TAGS_TO_PRODUCTS . ")
@@ -387,7 +391,7 @@ class ZenTags extends base
              );
         }
     }
-    
+
     public function addTagMapping($tag_mapping_id, $tag_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
@@ -400,7 +404,7 @@ class ZenTags extends base
                 ($tag_id, $tag_mapping_id)"
         );
     }
-    
+
     // -----
     // A 'valid' tag-name contains only alphanumeric characters.
     //
@@ -408,7 +412,7 @@ class ZenTags extends base
     {
         return ctype_alnum((string)$tag_name);
     }
-  
+
     // -----
     // Return the tag_id associated with the specified "Tag Name", optionally creating the entry.
     //
@@ -420,13 +424,13 @@ class ZenTags extends base
     {
         return $this->tagId($tag_name, true);
     }
-    protected function tagId($tag_name, $create = true) 
+    protected function tagId($tag_name, $create = true)
     {
         $tag_name = zen_db_input($tag_name);
         $tag_info = $GLOBALS['db']->Execute(
-            "SELECT tag_id 
-               FROM " . TABLE_TAGS . " 
-              WHERE tag_name = '$tag_name' 
+            "SELECT tag_id
+               FROM " . TABLE_TAGS . "
+              WHERE tag_name = '$tag_name'
               LIMIT 1"
         );
         if (!$tag_info->EOF) {
@@ -436,86 +440,91 @@ class ZenTags extends base
         } else {
             $tag_name = trim($tag_name);
             $GLOBALS['db']->Execute(
-                "INSERT INTO " . TABLE_TAGS . " 
-                    (languages_id, tag_name) 
-                 VALUES 
+                "INSERT INTO " . TABLE_TAGS . "
+                    (languages_id, tag_name)
+                 VALUES
                     (1, '$tag_name')"
                 );
             $tag_id = $GLOBALS['db']->Insert_ID();
         }
         return $tag_id;
     }
-  
+
     // -----
     // Returns the usage count for the specified "Tag Name".
     //
-    public function tagCountFromName($tag_name) 
+    public function tagCountFromName($tag_name)
     {
         return $this->tagCountFromId($this->tagId($tag_name));
     }
-  
+
     // -----
     // Returns the usage count for the specified "Tag ID".
     //
-    public function tagCountFromId($tag_id) 
+    public function tagCountFromId($tag_id)
     {
         $tag_id = (int)$tag_id;
         $usage_info = $GLOBALS['db']->Execute(
-            "SELECT count(*) AS count 
-               FROM " . TABLE_TAGS_TO_PRODUCTS . " 
+            "SELECT count(*) AS count
+               FROM " . TABLE_TAGS_TO_PRODUCTS . "
               WHERE tag_id = $tag_id"
         );
         $tag_count = $usage_info->fields['count'];
         unset($usage_info);
 
         $usage_info = $GLOBALS['db']->Execute(
-            "SELECT tag_mapping_id 
-               FROM " . TABLE_TAGS_TO_CATEGORIES . " 
+            "SELECT tag_mapping_id
+               FROM " . TABLE_TAGS_TO_CATEGORIES . "
               WHERE tag_id = $tag_id"
         );
         $tag_count += $usage_info->fields['count'];
         return $tag_count;
     }
-  
+
     // -----
     // Returns the name of the specified tag (or '' if not found).
     //
-    public function getTagName($tag_id) 
+    public function getTagName($tag_id)
     {
         $tag_id = (int)$tag_id;
         $tag_name_info = $GLOBALS['db']->Execute(
-            "SELECT tag_name 
-               FROM " . TABLE_TAGS . " 
-              WHERE tag_id = $tag_id 
-                AND languages_id = 1 
+            "SELECT tag_name
+               FROM " . TABLE_TAGS . "
+              WHERE tag_id = $tag_id
+                AND languages_id = 1
               LIMIT 1"
         );
         return ($tag_name_info->EOF) ? '' : $tag_name_info->fields['tag_name'];
     }
-  
+
     // -----
     // Returns the "Zen Cart Tag Cloud" HTML block.
     //
-    public function makeTagCloud() 
+    public function makeTagCloud()
     {
         $tag_array = $this->makeTagCloudArray();
         $tag_cloud = '';
-        if (count($tag_array) != 0) {
+        if (count($tag_array) !== 0) {
             $tag_cloud = '<div class="zenTagCloud">';
             foreach ($tag_array as $current_tag) {
-                $tag_cloud .= '<span class="zenTag"><a style="font-size: ' . $current_tag['font_size'] . ';" href="' . zen_href_link(FILENAME_ADVANCED_SEARCH_RESULT, 'tID=' . $current_tag['tag_id'] . '&keyword=' . $current_tag['tag_name']) . '">' . $current_tag['tag_name'] . '</a></span> ';
+                $tag_cloud .=
+                    '<span class="zenTag">' .
+                        '<a style="font-size: ' . $current_tag['font_size'] . ';" href="' . zen_href_link(FILENAME_ADVANCED_SEARCH_RESULT, 'tID=' . $current_tag['tag_id'] . '&keyword=' . $current_tag['tag_name']) . '">' .
+                            $current_tag['tag_name'] .
+                        '</a>' .
+                    '</span> ';
             }
             $tag_cloud .= '</div>';
         }
         return $tag_cloud;
     }
-  
+
     // -----
     // Returns the "Zen Cart Tag Cloud" information in an associative array.
     //
-    public function makeTagCloudArray() 
+    public function makeTagCloudArray()
     {
-        $tags = array ();
+        $tags = [];
         $minimum_usage = 0;
         $maximum_usage = 0;
 
@@ -528,25 +537,25 @@ class ZenTags extends base
                         ON t2c.tag_id = t.tag_id
            GROUP BY t.tag_id, t.tag_name"
         );
-        while (!$tag_info->EOF) {
-            $tag_info->fields['count'] = $tag_info->fields['p_count'] + $tag_info->fields['c_count'];
 
-            if ($minimum_usage == 0 || $tag_info->fields['count'] < $minimum_usage) {
-                $minimum_usage = $tag_info->fields['count'];
+        foreach ($tag_info as $next_tag) {
+            $next_tag['count'] = $next_tag['p_count'] + $next_tag['c_count'];
+
+            if ($minimum_usage == 0 || $next_tag['count'] < $minimum_usage) {
+                $minimum_usage = $next_tag['count'];
             }
-            if ($maximum_usage == 0 || $tag_info->fields['count'] > $maximum_usage) {
-                $maximum_usage = $tag_info->fields['count'];
+            if ($maximum_usage == 0 || $next_tag['count'] > $maximum_usage) {
+                $maximum_usage = $next_tag['count'];
             }
-            $tags[] = $tag_info->fields;
-            $tag_info->MoveNext ();
+            $tags[] = $next_tag;
         }
         unset($tag_info);
 
-        usort($tags, array($this, 'sortTagCloud'));
+        usort($tags, [$this, 'sortTagCloud']);
         $this->tags = $tags;
 
-        $tag_cloud_array = array();
-        if (count($tags) != 0) {
+        $tag_cloud_array = [];
+        if (count($tags) !== 0) {
             if ($maximum_usage == 0) {
                 $maximum_usage = 1;
             }
@@ -554,12 +563,12 @@ class ZenTags extends base
             $this->font_increment = $font_increment;
             foreach ($tags as $current_tag) {
                 $font_size = ($this->smallestFont + ($current_tag['count'] * $font_increment)) . $this->fontUnits;
-                $tag_cloud_array[] = array(
-                    'tag_id' => $current_tag['tag_id'], 
-                    'tag_name' => $current_tag['tag_name'], 
-                    'count' => $current_tag['count'], 
-                    'font_size' => $font_size 
-                );
+                $tag_cloud_array[] = [
+                    'tag_id' => $current_tag['tag_id'],
+                    'tag_name' => $current_tag['tag_name'],
+                    'count' => $current_tag['count'],
+                    'font_size' => $font_size,
+                ];
                 if (count($tag_cloud_array) >= $this->maxTags) {
                     break;
                 }
@@ -567,39 +576,38 @@ class ZenTags extends base
         }
         return $tag_cloud_array;
     }
-  
-    protected function sortTagCloud($a, $b) 
+
+    protected function sortTagCloud($a, $b)
     {
-        $sort_field = ($this->tagsOrderBy == 'name') ? 'tag_name' : 'count';
-        if ($a[$sort_field] == $b[$sort_field]) {
+        $sort_field = ($this->tagsOrderBy === 'name') ? 'tag_name' : 'count';
+        if ($a[$sort_field] === $b[$sort_field]) {
             return 0;
         }
-        return ($a[$sort_field] < $b[$sort_field]) ? (($this->tagsSortOrder == 'ASC') ? -1 : 1) : (($this->tagsSortOrder == 'ASC') ? 1 : -1);
+        return ($a[$sort_field] < $b[$sort_field]) ? (($this->tagsSortOrder === 'ASC') ? -1 : 1) : (($this->tagsSortOrder === 'ASC') ? 1 : -1);
     }
-  
-    public function getProductIdList($tag_id) 
+
+    public function getProductIdList($tag_id)
     {
-        $id_array = array ();
+        $id_array = [];
         $tag_id = (int)$tag_id;
         $product_info = $GLOBALS['db']->Execute(
-            "SELECT tag_mapping_id
-               FROM " . TABLE_TAGS_TO_PRODUCTS . " 
+            "SELECT tag_mapping_id, tag_mapping_type
+               FROM " . TABLE_TAGS_TO_PRODUCTS . "
               WHERE tag_id = $tag_id"
         );
-        while (!$product_info->EOF) {
-            if ($product_info->fields['tag_mapping_type'] == self::TAG_MAP_PRODUCT) {
-                $id_array[] = $product_info->fields['tag_mapping_id'];
+        foreach ($product_info as $next_product) {
+            if ($next_product['tag_mapping_type'] == self::TAG_MAP_PRODUCT) {
+                $id_array[] = $next_product['tag_mapping_id'];
             
-            } elseif ($product_info->fields['tag_mapping_type'] == self::TAG_MAP_CATEGORY) {
-                $categories_products_id_list = array ();
-                $categories_products_id_list = zen_get_categories_products_list($product_info->fields['tag_mapping_id']);
+            } elseif ($next_product['tag_mapping_type'] == self::TAG_MAP_CATEGORY) {
+                $categories_products_id_list = [];
+                $categories_products_id_list = zen_get_categories_products_list($next_product['tag_mapping_id']);
                 foreach ($categories_products_id_list as $key => $value) {
                     $id_array[] = $key;
                 }
             }
-            $product_info->MoveNext ();
         }
-        if (count($id_array) == 0) {
+        if (count($id_array) === 0) {
             $id_array[] = 0;
         } else {
             $id_array = array_unique($id_array);

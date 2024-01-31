@@ -1,111 +1,92 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin for Zen Cart v1.5.6 (and later)
-// Copyright (C) 2018-2020, Vinos de Frutas Tropicales (lat9)
-// @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+// Copyright (C) 2018-2024, Vinos de Frutas Tropicales (lat9)
+// @license https://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
 //
-class zcObserverZenTagsSearch extends base 
+class zcObserverZenTagsSearch extends base
 {
-    public function __construct() 
+    protected int $tID;
+
+    public function __construct()
     {
-        if (defined('ZEN_TAGS_ENABLE') && ZEN_TAGS_ENABLE == 'true') {
-            $this->tID = (isset($_GET['tID']) && ((int)$_GET['tID']) > 0) ? ((int)$_GET['tID']) : false;
-            $this->order_by = '';
-            if ($this->tID !== false || (defined('ZEN_TAGS_SEARCH_ALWAYS') && ZEN_TAGS_SEARCH_ALWAYS == 'true')) {
+        if (defined('ZEN_TAGS_ENABLE') && ZEN_TAGS_ENABLE === 'true') {
+            $this->tID = (int)($_GET['tID'] ?? '0');
+            $this->tID = ($this->tID > 0) ? $this->tID : 0;
+            if ($this->tID !== 0 || (defined('ZEN_TAGS_SEARCH_ALWAYS') && ZEN_TAGS_SEARCH_ALWAYS === 'true')) {
                 $this->attach(
-                    $this, 
-                    array(
-                        'NOTIFY_SEARCH_ORDERBY_STRING',
-                        'NOTIFY_SEARCH_FROM_STRING',
-                        'NOTIFY_SEARCH_WHERE_STRING',
-                        'NOTIFY_SEARCH_SELECT_STRING'
-                    )
+                    $this,
+                    [
+                        'NOTIFY_SEARCH_SELECT_STRING',
+                        'NOTIFY_AJAX_BOOTSTRAP_SEARCH_CLAUSES',
+                    ]
                 );
             }
         }
     }
 
-    public function update(&$class, $eventID) 
+    protected function updateNotifySearchSelectString(&$class, $eventID, $select_str_in, &$select_str_out)
     {
-        switch ($eventID) {
-            case 'NOTIFY_SEARCH_SELECT_STRING':
-                if (!empty($GLOBALS['keywords']) && !empty($_GET['keyword']) && zen_parse_search_string(stripslashes($_GET['keyword']), $search_keywords)) {
-                    $in_tag_select = '';
-                    foreach ($search_keywords as $current_keyword) {
-                        switch ($current_keyword) {
-                            case '(':
-                            case ')':
-                            case 'and':
-                            case 'or':      //- Fall-through from above ...
-                                $in_tag_select .= " $current_keyword ";
-                                break;
-
-                            default:
-                                $in_tag_select .= "t.tag_name LIKE '%:keywords%'";
-                                $in_tag_select = $GLOBALS['db']->bindVars($in_tag_select, ':keywords', $current_keyword, 'noquotestring');
-                                break;
-                        }
-                    }
-                    $GLOBALS['select_str'] .= ", IF (t2p.tag_mapping_id = p.products_id and t2p.tag_id = t.tag_id AND ($in_tag_select), 1, 0) AS in_tag ";
-                    $this->order_by = ' in_tag DESC,';
-                }
-                break;
-                
-            case 'NOTIFY_SEARCH_FROM_STRING':
-//                $GLOBALS['from_str'] = $this->insertAfter($GLOBALS['from_str'], ' c,', ' ' . TABLE_TAGS . ' t, ');
-                $GLOBALS['from_str'] .= PHP_EOL . "LEFT JOIN " . TABLE_TAGS_TO_PRODUCTS . ' t2p ON t2p.tag_mapping_id = p.products_id ';
-                $GLOBALS['from_str'] .= PHP_EOL . "LEFT JOIN " . TABLE_TAGS . ' t ON t.tag_id = t2p.tag_id ';
-                break;
-                
-            case 'NOTIFY_SEARCH_WHERE_STRING':
-                global $keywords, $where_str;
-                if ($this->tID !== false) {
-                    $p2c_str = 'p2c.categories_id = c.categories_id';
-                    $p2c_pos = strpos($where_str, $p2c_str);
-                    $GLOBALS['where_str'] = substr($GLOBALS['where_str'], 0, $p2c_pos + strlen($p2c_str)) . " AND t2p.tag_id = {$this->tID} )";
-                } else {
-                    if (!empty($GLOBALS['keywords']) && isset($_GET['keyword']) && zen_parse_search_string(stripslashes($_GET['keyword']), $search_keywords)) {
-                        $tags_where = 'AND ((t.tag_id = t2p.tag_id AND (';
-                        foreach ($search_keywords as $current_keyword) {
-                            switch ($current_keyword) {
-                                case '(':
-                                case ')':
-                                case 'and':
-                                case 'or':
-                                    $tags_where .= " $current_keyword ";
-                                    break;
-                    
-                                default:
-                                    $tags_where .= "t.tag_name LIKE '%:keywords%'";
-                                    $tags_where = $GLOBALS['db']->bindVars($tags_where, ':keywords', $current_keyword, 'noquotestring');
-                                    break;
-                            }
-                        }
-                        $GLOBALS['where_str'] = str_replace('AND ((', $tags_where . ')) OR (', $GLOBALS['where_str']);
-                    }
-                } 
-                break;
-                
-            case 'NOTIFY_SEARCH_ORDERBY_STRING':
-                if ($this->tID !== false) {
-                    $GLOBALS['keywords'] = "tag ({$GLOBALS['keywords']})";
-                }
-                $GLOBALS['listing_sql'] = str_ireplace('order by', 'order by' . $this->order_by, $GLOBALS['listing_sql']);
-                break; 
-
-            default:
-                break;
+        if (!empty($_GET['keyword'])) {
+            // -----
+            // Since a search keyword was specified, attach to the remaining search-query
+            // clauses' generation to search for matching tags.
+            //
+            $this->attach(
+                $this,
+                [
+                    'NOTIFY_SEARCH_FROM_STRING',
+                    'NOTIFY_SEARCH_WHERE_STRING',
+                ]
+            );
         }
     }
-    
-    protected function insertAfter($the_string, $insert_after, $insert_string)
+
+    protected function updateNotifySearchFromString(&$class, $eventID, $from_str_in, &$from_str_out)
     {
-        $insert_pos = strpos($the_string, $insert_after);
-        if ($insert_pos === false) {
-            trigger_error("Missing 'anchor' string ($insert_after) from 'base' string ($the_string); the search does not include any tags.", E_USER_WARNING);
+        $from_str_out .= $this->updateFromClause();
+    }
+
+    protected function updateNotifySearchWhereString(&$class, $eventID, $search_keywords, &$where_str)
+    {
+        $where_str .= $this->updateWhereClause($_GET['keyword']);
+    }
+
+    protected function updateNotifyAjaxBootstrapSearchClauses(&$class, $eventID, $search_keywords, &$select_clause, &$from_clause, &$where_clause)
+    {
+        $from_clause .= $this->updateFromClause();
+        $where_clause .= $this->updateWhereClause($_POST['keywords'], strpos($from_clause, 'p2c') !== false);
+    }
+
+    protected function updateFromClause(): string
+    {
+        return
+            " LEFT JOIN " . TABLE_TAGS_TO_PRODUCTS . " t2p ON t2p.tag_mapping_id = p.products_id
+              LEFT JOIN " . TABLE_TAGS . " t ON t.tag_id = t2p.tag_id ";
+    }
+
+    protected function updateWhereClause(string $keyword_string, bool $use_p2c = true): string
+    {
+        if ($this->tID !== 0) {
+            $where_clause = " AND t2p.tag_id = {$this->tID})";
         } else {
-            $the_string = substr_replace($the_string, $insert_string, $insert_pos + strlen($insert_after), 0);
+            // -----
+            // While the main search page includes the products_to_categories and categories
+            // tables in its search, the Bootstrap Ajax search doesn't.
+            //
+            $p2c_clause = '';
+            if ($use_p2c === true) {
+                $p2c_clause = ' AND p.products_id = p2c.products_id AND p2c.categories_id = c.categories_id ';
+            }
+            $where_clause = ' OR
+                (
+                        p.products_status = 1
+                    AND p.products_id = pd.products_id
+                    AND pd.language_id = ' . (int)$_SESSION['languages_id'] .
+                    $p2c_clause . '
+                    AND t.tag_id = t2p.tag_id ' . zen_build_keyword_where_clause(['t.tag_name'], $keyword_string) .
+                ')';
         }
-        return $the_string;
+        return $where_clause;
     }
 }
