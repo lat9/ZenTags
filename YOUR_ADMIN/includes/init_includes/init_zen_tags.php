@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9 (Cindy Merkin)
-// Copyright (c) 2014-2020 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2024 Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
@@ -14,8 +14,8 @@ if (empty($_SESSION['admin_id'])) {
     return;
 }
 
-define ('ZEN_TAGS_CURRENT_VERSION', '1.0.1');
-define ('ZEN_TAGS_LAST_UPDATE_DATE', '2020-01-01');
+define('ZEN_TAGS_CURRENT_VERSION', '2.0.0-beta1');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-xx-yy');
 
 // -----
 // Create the configuration group and associated items to allow the configuration of the "Tag Cloud" sidebox.
@@ -53,9 +53,9 @@ if (!defined('ZEN_TAGS_VERSION')) {
         "INSERT INTO " . TABLE_CONFIGURATION . " 
             (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function) 
          VALUES 
-            ('Zen Cart &quot;Tags&quot; Installed Version', 'ZEN_TAGS_VERSION', '" . ZEN_TAGS_CURRENT_VERSION . "', 'Displays the Zen Tag plugin\'s current version.', $cgi, 1, now(), NULL, 'trim(' ),
+            ('Zen Cart &quot;Tags&quot; Installed Version', 'ZEN_TAGS_VERSION', '" . ZEN_TAGS_CURRENT_VERSION . "', 'Displays the Zen Tag plugin\'s current version.', $cgi, 1, now(), NULL, 'zen_cfg_read_only(' ),
 
-            ('Enable on Storefront?', 'ZEN_TAGS_ENABLE', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, the default, <em>Zen Tags</em> is enabled on your storefront.', $cgi, 5, now(), NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),'),
+            ('Enable on Storefront?', 'ZEN_TAGS_ENABLE', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, the default, <em>Zen Tags</em> is enabled on your storefront.', $cgi, 5, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],'),
 
             ('Tag Cloud &mdash; Text Size (Smallest)', 'ZEN_TAGS_CLOUD_SMALLEST', '8', 'What text size displays the tag with the smallest usage (the units are given by the <em>Tag Cloud &mdash; Unit</em> setting.', $cgi, 10, now(),  NULL, NULL),
 
@@ -65,13 +65,13 @@ if (!defined('ZEN_TAGS_VERSION')) {
 
             ('Tag Cloud &mdash; Maximum Tags', 'ZEN_TAGS_CLOUD_MAX', '45', 'What is the maximum number of <em>tags</em> to be displayed within the &quot;Tag Cloud&quot;?', $cgi, 16, now(), NULL, NULL),
 
-            ('Tag Cloud &mdash; Order By', 'ZEN_TAGS_ORDER_BY', 'name', 'Identify which value influences the order of the tag names display in the &quot;Tag Cloud&quot;.', $cgi, 18, now(), NULL, 'zen_cfg_select_option(array(\'name\', \'count\'),'),
+            ('Tag Cloud &mdash; Order By', 'ZEN_TAGS_ORDER_BY', 'name', 'Identify which value influences the order of the tag names display in the &quot;Tag Cloud&quot;.', $cgi, 18, now(), NULL, 'zen_cfg_select_option([\'name\', \'count\'],'),
 
-            ('Tag Cloud &mdash; Sort Order', 'ZEN_TAGS_SORT_ORDER', 'ASC', 'Identifies the sort order to be used when displaying the tag names in the &quot;Tag Cloud&quot;.', $cgi, 20, now(), NULL, 'zen_cfg_select_option(array(\'ASC\', \'DESC\'),'),
+            ('Tag Cloud &mdash; Sort Order', 'ZEN_TAGS_SORT_ORDER', 'ASC', 'Identifies the sort order to be used when displaying the tag names in the &quot;Tag Cloud&quot;.', $cgi, 20, now(), NULL, 'zen_cfg_select_option([\'ASC\', \'DESC\'],'),
 
-            ('Remove Unused Tags?', 'ZEN_TAGS_REMOVE_IF_NOT_USED', 'true', 'If a tag name is no longer referenced by any mapping (e.g. not used by any product or category), should the tag be removed from the database?', $cgi, 30, now(), NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+            ('Remove Unused Tags?', 'ZEN_TAGS_REMOVE_IF_NOT_USED', 'true', 'If a tag name is no longer referenced by any mapping (e.g. not used by any product or category), should the tag be removed from the database?', $cgi, 30, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
     );
-  
+
     // -----
     // Create the tag-related tables, if they don't already exist.
     //
@@ -108,7 +108,7 @@ if (!defined('ZEN_TAGS_VERSION')) {
     define('ZEN_TAGS_VERSION', '0.0.0');
 }
 
-if (ZEN_TAGS_VERSION != ZEN_TAGS_CURRENT_VERSION) {
+if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
     switch (true) {
         // -----
         // v1.0.0: Adds configuration setting to identify whether/not to **always** include matching tags in a product-search.
@@ -118,9 +118,9 @@ if (ZEN_TAGS_VERSION != ZEN_TAGS_CURRENT_VERSION) {
                 "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                     (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function) 
                  VALUES
-                    ('Always Include Tags in Search?', 'ZEN_TAGS_SEARCH_ALWAYS', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, whether a storefront product-search <em>always</em> includes products with tags that match the search <code>keywords</code>.  This setting applies <em>only</em> if tags are enabled for use on your storefront.', $cgi, 6, now(), NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                    ('Always Include Tags in Search?', 'ZEN_TAGS_SEARCH_ALWAYS', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, whether a storefront product-search <em>always</em> includes products with tags that match the search <code>keywords</code>.  This setting applies <em>only</em> if tags are enabled for use on your storefront.', $cgi, 6, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
             );
-            
+
             // -----
             // Previous v1.0.0-beta versions might have allowed either empty tag-names or untrimmed tag names to
             // be inserted into the 'tags' table.  Clean them up ...
@@ -143,11 +143,19 @@ if (ZEN_TAGS_VERSION != ZEN_TAGS_CURRENT_VERSION) {
                       LIMIT 1"
                 );
             }
-                                                            //-Fall through from above to continue with updates
+        case version_compare(ZEN_TAGS_VERSION, '2.0.0', '<'):   //-Fall through from above to continue with updates
+                $db->Execute(
+                    "UPDATE " . TABLE_CONFIGURATION . "
+                        SET set_function = 'zen_cfg_read_only(',
+                            last_modified = now()
+                      WHERE configuration_key = 'ZEN_TAGS_VERSION'
+                      LIMIT 1"
+                );
+                                                               //-Fall through from above to continue with updates
         default:
             break;
     }
-    
+
     $db->Execute(
         "UPDATE " . TABLE_CONFIGURATION . " 
             SET configuration_value = '" . ZEN_TAGS_CURRENT_VERSION . "',
@@ -155,8 +163,8 @@ if (ZEN_TAGS_VERSION != ZEN_TAGS_CURRENT_VERSION) {
           WHERE configuration_key = 'ZEN_TAGS_VERSION' 
           LIMIT 1"
     );
-    
-    if (ZEN_TAGS_VERSION == '0.0.0') {
+
+    if (ZEN_TAGS_VERSION === '0.0.0') {
         $messageStack->add_session(sprintf(ZEN_TAG_INSTALLED, ZEN_TAGS_CURRENT_VERSION), 'success');
     } else {
         $messageStack->add_session(sprintf(ZEN_TAG_UPDATED, ZEN_TAGS_CURRENT_VERSION), 'success');

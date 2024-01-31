@@ -206,7 +206,9 @@ td, th { padding: 5px; }
 <ul>
   <li>v2.0.0-beta1, 2024-01-xx<ul>
     <li>CHANGE: Drop support for Zen Cart versions <em>prior to</em> 1.5.8<b>a</b>; validation performed against the current alpha version of v2.0.0.</li>
+    <li>CHANGE: Use <var>zen_cfg_read_only</var> as the plugin's version setting's <var>set_function</var>.</li>
     <li>The following files where changed or <span class="removed">removed</span>:<ol>
+        <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
         <li><span class="removed">/zc156/YOUR_ADMIN/*.*</span></li>
     </ol></li>
   </ul></li>
