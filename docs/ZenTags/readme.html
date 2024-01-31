@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
-<link rel="icon" href="../vinos_favicon.ico" type="image/x-icon" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+<link rel="icon" href="../vinos_favicon.ico" type="image/x-icon">
 <title>Zen Cart Products' &quot;Tag Cloud&quot; (and more)</title>
 
-<style type="text/css">
-<!--
+<style>
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
 body, p, h1, h2, h3, h4, h5, h6, li, td, dd, img, dt, pre, table { font-family: verdana, avantgarde, tahoma, arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
@@ -43,19 +42,18 @@ td, th { padding: 5px; }
 #table_tag_mapping li { list-style-type: none; }
 #table_tag_mapping ul, #table_tag_mapping ul li { padding-left: 0; margin-left: 0; }
 #table_tags, #table_tag_mapping { margin-top: 0; }
--->
 </style>
 </head>
 
 <body>
-<h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.6 and later)</h1>
-<h3>Version 1.0.1</h3>
-<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2020, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
+<h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.8a and later)</h1>
+<h3>Version 2.0.0</h3>
+<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2024, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
 <hr />
 <h2>What it does</h2>
-<p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.6 and later:</p>
+<p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.8a and later (including v2.0.0):</p>
 <ol>
   <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's products.</li>
   <li>Modification to the Zen Cart <em>built-in</em> advanced search processing to allow searches to be performed against these tags.</li>
@@ -104,7 +102,7 @@ td, th { padding: 5px; }
 </table>
 
 <h5>Added Configuration Elements</h5>
-<p>The initialization script also creates the <em>Configuration-&gt;Category/Product Tags</em> group, allowing you to configure the store-side operation of the <em>Tag Cloud</em> sidebox.</p>
+<p>The initialization script also creates the <em>Configuration :: Category/Product Tags</em> group, allowing you to configure the store-side operation of the <em>Tag Cloud</em> sidebox.</p>
 <table id="tag_configuration">
   <tr class="tableHead">
     <th align="left">Field Name</th>
@@ -159,8 +157,8 @@ td, th { padding: 5px; }
     <li>When you <em>remove</em> a tag from a category, that tag is removed from all sub-categories and products in that category.</li>
     <li>When you <em>add</em> or <em>remove</em> a tag from a product, that tag is added/removed from that single product.</li>
   </ul></li>
-  <li>A new (zen_tag_cloud) sidebox is available for positioning within your store (<em>Tools-&gt;Layout Boxes Controller</em>).</li>
-  <li>Configuration for the <em>Zen Tag Cloud</em> are provided in <em>Configuration-&gt;Zen Product Tags</em>
+  <li>A new (zen_tag_cloud) sidebox is available for positioning within your store (<em>Tools :: Layout Boxes Controller</em>).</li>
+  <li>Configuration for the <em>Zen Tag Cloud</em> are provided in <em>Configuration :: Zen Product Tags</em>
 </ol>
 <h3>Database I/O Manager (DbIo) Integration</h3>
 <p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
@@ -173,14 +171,9 @@ td, th { padding: 5px; }
 
 <hr />
 <h2>Installation</h2>
-<p>There are <span class="corefile">core-file overwrites</span> in the plugin, and it makes changes to your database; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  All <span class="corefile">core-file</span> modifications are marked, search for <b>-lat9</b>.</p>
-<p>References to files in the <code>YOUR_ADMIN</code> directory identify changes to be made in files associated with your Zen Cart's &quot;secret admin directory&quot;.  Unless otherwise noted, <span class="corefile">core file</span> changes use the like-named file from the Zen Cart 1.5.6c distribution as the change-basis.  Each of those changes is the addition of a notification that is currently &quot;in-core&quot; for zc157 and later!</p>
+<p>There are no <span class="corefile">core-file overwrites</span> in the plugin, and it makes changes to your database; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
+<p>References to files in the <code>YOUR_ADMIN</code> directory identify changes to be made in files associated with your Zen Cart's &quot;secret admin directory&quot;.</p>
 <ol>
-  <li>If you are running a variant of zc156, for each of the <span class="corefile">core files</span> listed below, compare the contents of your <em>current</em> version of the file, merging any changes required by this plugin. Each of the file changes is simply the inclusion of a notification (submitted and now present for zc157 and later) used by the plugin's admin-level observer:<ol>
-    <li><span class="corefile">/zc156/YOUR_ADMIN/categories.php</span> &mdash; gathers and updates any category-specific tag names via an AJAX &quot;helper&quot;.</li>
-    <li><span class="corefile">/zc156/YOUR_ADMIN/includes/modules/copy_product_confirm.php</span> &mdash; copies any tags associated with the &quot;source&quot; product to its duplicate.</li>
-    <li><span class="corefile">/zc156/YOUR_ADMIN/includes/modules/product/collect_info.php</span> &mdash; gathers and updates any product-specific tag names via an AJAX &quot;helper&quot;.</li>
-  </ol>Once the file-merge is completed, copy the updated files to their like-named sub-directories of your store's admin-directory.</li>
   <li>Rename this plugin's <code>YOUR_ADMIN</code> directory to match your Zen Cart's secret-admin-directory's name.</li>
   <li>Copy the files to your cart's file-system, after renaming the <b>YOUR_ADMIN</b> folder to match your Zen Cart's secret admin folder:<ol>
     <li>/includes/auto_loaders/config.zen_tags.php</li>
@@ -211,6 +204,12 @@ td, th { padding: 5px; }
 <hr />
 <h2>Version History:</h2>
 <ul>
+  <li>v2.0.0-beta1, 2024-01-xx<ul>
+    <li>CHANGE: Drop support for Zen Cart versions <em>prior to</em> 1.5.8<b>a</b>; validation performed against the current alpha version of v2.0.0.</li>
+    <li>The following files where changed or <span class="removed">removed</span>:<ol>
+        <li><span class="removed">/zc156/YOUR_ADMIN/*.*</span></li>
+    </ol></li>
+  </ul></li>
   <li>v1.0.1, 2020-01-01<ul>
     <li>BUGFIX: Correct MySQL error on <code>advanced_search_results</code> page when sub-categories are included.</li>
     <li>BUGFIX: Correct &quot;no search results returned&quot; when no tags are defined.</li>
