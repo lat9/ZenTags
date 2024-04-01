@@ -1,6 +1,6 @@
 <?php
 // -----
-// Part of the "Zen Tags" plugin for Zen Cart v1.5.6 (and later)
+// Part of the "Zen Tags" plugin for Zen Cart v1.5.8a (and later)
 // Copyright (C) 2018-2024, Vinos de Frutas Tropicales (lat9)
 // @license https://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
 //
@@ -19,6 +19,7 @@ class zcObserverZenTagsSearch extends base
                     [
                         'NOTIFY_SEARCH_SELECT_STRING',
                         'NOTIFY_AJAX_BOOTSTRAP_SEARCH_CLAUSES',
+                        'NOTIFY_SEARCH_RESULTS',
                     ]
                 );
             }
@@ -89,5 +90,20 @@ class zcObserverZenTagsSearch extends base
             $where_clause .= ' AND t.tag_id = t2p.tag_id ' . zen_build_keyword_where_clause(['t.tag_name'], $keyword_string);
         }
         return $where_clause . ')';
+    }
+
+    protected function updateNotifySearchResults(&$class, $eventID, $listing_sql, &$keywords, &$results)
+    {
+        global $db;
+
+        $search_tag = $db->Execute(
+            "SELECT tag_name
+               FROM " . TABLE_TAGS . "
+              WHERE tag_id = {$this->tID}
+              LIMIT 1"
+        );
+        if (!$search_tag->EOF) {
+            $keywords = $search_tag->fields['tag_name'];
+        }
     }
 }
