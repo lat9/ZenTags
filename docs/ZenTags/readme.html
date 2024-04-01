@@ -7,7 +7,7 @@
 <title>Zen Cart Products' &quot;Tag Cloud&quot; (and more)</title>
 
 <style>
-a, a:active, a:visited { color: #006666; text-decoration: none; }
+a, a:active, a:visited { color: #006666; }
 a:hover { color:#00CC99; text-decoration: underline; }
 body, p, h1, h2, h3, h4, h5, h6, li, td, dd, img, dt, pre, table { font-family: verdana, avantgarde, tahoma, arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
 h1, h2, h3, h4 { font-weight: bold; padding: 5px; border: 1px solid #666; }
@@ -166,8 +166,9 @@ td, th { padding: 5px; }
 <p>On import, only the <code>v_products_id</code> and <code>v_products_tags</code> columns are required/used.  Leave the <code>v_products_tags</code> column empty and <b>all</b> tags associated with the associated product are <em>removed</em>.</p>
 
 <h4>Storefront Changes</h4>
-<p>This plugin provides the <em>zen_tag_cloud</em> sidebox which, if enabled, displays a collection of tags from your store's configuration.  Each tag is displayed as a link to the <code>advanced_search_result</code> page, where all products matching the selected tag are displayed.</p>
+<p>This plugin provides the <em>zen_tag_cloud</em> sidebox which, if enabled, displays a collection of tags from your store's configuration.  Each tag is displayed as a link to the <code>search_result</code> page, where all products matching the selected tag are displayed.</p>
 <p><em>ZenTags</em> also enables product-searches to include products with tags that match any search <em>keywords</em>.</p>
+<p>You can also modify your store to display searchable tags for each product sold (on the product's 'information' page, e.g. <code>product_info</code>). The template changes <b>are not distributed</b> in this plugin's zip-file; see <a href="https://github.com/lat9/ZenTags/wiki/Showing-product-tags-on-product-%22information%22-pages" target="_blank">this</a> GitHub Wiki article for the hand-edits required.</p>
 
 <hr />
 <h2>Installation</h2>
@@ -182,6 +183,7 @@ td, th { padding: 5px; }
     <li>/includes/classes/ajax/zcAjaxTagManager.php</li>
     <li>/includes/extra_datafiles/zen_tags_database_names.php</li>
     <li>/includes/languages/english/extra_definitions/lang.zen_tags_extra_definitions.php</li>
+    <li>/includes/modules/pages/product_info/header_php_product_info_zen_tags.php</li>
     <li>/includes/modules/sideboxes/zen_tag_cloud.php</li>
     <li>/includes/templates/template_default/sideboxes/tpl_zen_tag_cloud.php</li>
     <li>/YOUR_ADMIN/includes/auto_loaders/config.zen_tags_admin.php</li>
@@ -204,10 +206,11 @@ td, th { padding: 5px; }
 <hr />
 <h2>Version History:</h2>
 <ul>
-  <li>v2.0.0-beta1, 2024-01-xx<ul>
-    <li>CHANGE: Drop support for Zen Cart versions <em>prior to</em> 1.5.8<b>a</b>; validation performed against the current alpha version of v2.0.0.</li>
+  <li>v2.0.0-beta1, 2024-04-xx<ul>
+    <li>CHANGE: Drop support for Zen Cart versions <em>prior to</em> 1.5.8<b>a</b>; validation performed against the version 2.0.0-rc2.</li>
     <li>CHANGE: Use <var>zen_cfg_read_only</var> as the plugin's version setting's <var>set_function</var>.</li>
-    <li>The following files where changed or <span class="removed">removed</span>:<ol>
+    <li>CHANGE: Enable a product's tags to be displayed on its 'information' page &mdash; see <a href="https://github.com/lat9/ZenTags/wiki/Showing-product-tags-on-product-%22information%22-pages" target="_blank">this</a> Wiki article for template-specific changes required.</li>
+    <li>The following files where changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
         <li>/includes/auto_loaders/config.zen_tags.php</li>
         <li>/includes/classes/ZenTags.php</li>
         <li>/includes/classes/auto.zen_tags_search.php</li>
@@ -215,6 +218,7 @@ td, th { padding: 5px; }
         <li>/includes/extra_datafiles/zen_tags_database_names.php</li>
         <li>/includes/languages/english/extra_definitions/lang.zen_tags_extra_definitions.php</li>
         <li><span class="removed">/includes/languages/english/extra_definitions/zen_tags_extra_definitions.php</span></li>
+        <li><span class="added">/includes/modules/pages/product_info/header_php_product_info_zen_tags.php</span></li>
         <li>/includes/modules/sideboxes/zen_tag_cloud.php</li>
         <li>/includes/templates/template_default/sideboxes/tpl_zen_tag_cloud.php</li>
         <li>/YOUR_ADMIN/includes/auto_loaders/config.zen_tags_admin.php</li>

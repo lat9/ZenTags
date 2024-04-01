@@ -15,5 +15,11 @@ $define = [
     // is for the tag-name (filled in where the %s lies in the constant).
     //
     'ZEN_TAG_SEARCH_IS_TAG' => 'tag (%s)',
+
+    // -----
+    // This language constant is used on the product_info page(s) to display the list
+    // of tags defined for the current product.
+    //
+    'ZEN_TAG_PRODUCT_TAGS' => 'Product Tags: ',
 ];
 return $define;
