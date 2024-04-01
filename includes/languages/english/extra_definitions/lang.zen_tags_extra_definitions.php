@@ -10,10 +10,10 @@ $define = [
     'ZEN_TAG_HEADING_TAG_CLOUD' => 'Product Tag Cloud',
 
     // -----
-    // This language constant is used on the advanced_search_results page when the search
+    // This language constant is used on the search_results page when the search
     // is initiated by the zen_tag_cloud sidebox, to indicate to the customer that the search
-    // is for the tag-name (filled in where the %s lies in the constant.
+    // is for the tag-name (filled in where the %s lies in the constant).
     //
-    'ZEN_TAG_SEARCH_IS_TAG' => 'tag(%s)',
+    'ZEN_TAG_SEARCH_IS_TAG' => 'tag (%s)',
 ];
 return $define;

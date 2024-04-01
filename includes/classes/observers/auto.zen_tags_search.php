@@ -103,7 +103,7 @@ class zcObserverZenTagsSearch extends base
               LIMIT 1"
         );
         if (!$search_tag->EOF) {
-            $keywords = $search_tag->fields['tag_name'];
+            $keywords = sprintf(ZEN_TAG_SEARCH_IS_TAG, $search_tag->fields['tag_name']);
         }
     }
 }
