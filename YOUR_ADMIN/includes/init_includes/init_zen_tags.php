@@ -7,15 +7,16 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
+define('ZEN_TAGS_CURRENT_VERSION', '2.0.0');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-04-02');
+
 // -----
-// Quick return if no admin is currently logged in.
+// Quick return if no admin is currently logged in or the plugin's
+// already at the current version.
 //
-if (empty($_SESSION['admin_id'])) {
+if (empty($_SESSION['admin_id']) || (defined('ZEN_TAGS_VERSION') && ZEN_TAGS_VERSION === ZEN_TAGS_CURRENT_VERSION)) {
     return;
 }
-
-define('ZEN_TAGS_CURRENT_VERSION', '2.0.0-beta1');
-define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-xx-yy');
 
 // -----
 // Create the configuration group and associated items to allow the configuration of the "Tag Cloud" sidebox.
