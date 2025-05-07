@@ -169,8 +169,8 @@ class ZenTags
         } elseif ($tag_mapping_type == self::TAG_MAP_NEWS && defined('TABLE_TAGS_TO_NEWS')) {
             $tag_mapping_table = TABLE_TAGS_TO_NEWS;
         } else {
-            trigger_error("Unknown tag-mapping-type ($tag_mapping_type).", E_USER_ERROR);
-            exit;
+            trigger_error("FATAL Error: Unknown tag-mapping-type ($tag_mapping_type).", E_USER_WARNING);
+            zen_exit();
         }
         return $tag_mapping_table;
     }
