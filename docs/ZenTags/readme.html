@@ -47,13 +47,13 @@ td, th { padding: 5px; }
 
 <body>
 <h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.8a and later)</h1>
-<h3>Version 2.0.0</h3>
-<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2024, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
+<h3>Version 2.0.1</h3>
+<p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2025, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
 <hr />
 <h2>What it does</h2>
-<p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.8a and later (including v2.0.0):</p>
+<p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.8a and later (including v2.0.x and v2.1.0):</p>
 <ol>
   <li>The creation of <em>tag</em> values, similar to the like-named WordPress items, that can be associated with a store's products.</li>
   <li>Modification to the Zen Cart <em>built-in</em> advanced search processing to allow searches to be performed against these tags.</li>
@@ -152,7 +152,7 @@ td, th { padding: 5px; }
 <h4>Zen Cart Admin Changes</h4>
 <p>Your Zen Cart admin-console is updated to:</p>
 <ol>
-  <li>Allow <em>tag</em> entry when editing a category or a product (<em>Catalog-&gt;Categories/Products</em>).<ul>
+  <li>Allow <em>tag</em> entry when editing a category or a product (<em>Catalog :: Categories/Products</em>).<ul>
     <li>When you <em>add</em> a tag to a category, that tag is added to <em>all</em> sub-categories and products in that category.</li>
     <li>When you <em>remove</em> a tag from a category, that tag is removed from all sub-categories and products in that category.</li>
     <li>When you <em>add</em> or <em>remove</em> a tag from a product, that tag is added/removed from that single product.</li>
@@ -201,7 +201,7 @@ td, th { padding: 5px; }
 
 <hr />
 <h2>Un-install</h2>
-<p>Delete the <b>new</b> files you copied to your store's file-system, then copy and paste the contents of <code>/docs/ZenTags/uninstall/zen_tags_uninstall.sql</code> into your admin's <em>Tools-&gt;Install SQL Patches</em> to remove the plugin's database changes.  Note that since the <span class="corefile">core-file</span> admin changes can safely be left, since those changes are each the inclusion of a notification only.</p>
+<p>Delete the <b>new</b> files you copied to your store's file-system, then copy and paste the contents of <code>/docs/ZenTags/uninstall/zen_tags_uninstall.sql</code> into your admin's <em>Tools :: Install SQL Patches</em> to remove the plugin's database changes.  Note that since the <span class="corefile">core-file</span> admin changes can safely be left, since those changes are each the inclusion of a notification only.</p>
 
 <hr />
 <h2>Version History:</h2>

@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9
-// Copyright (c) 2014-2024, Vinos de Frutas Tropicales
+// Copyright (c) 2014-2025, Vinos de Frutas Tropicales
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal Access');
@@ -10,7 +10,7 @@ if (!defined ('IS_ADMIN_FLAG')) {
 // -----
 // Zen Cart Tags
 //
-class ZenTags extends base
+class ZenTags
 {
     // -----
     // Used to identify the different associations between the tags and their "base" elements.
@@ -144,7 +144,7 @@ class ZenTags extends base
         return $tag_inputs;
     }
 
-    protected function generateTagsListProtected($tag_mapping_id, $tag_mapping_table)
+    protected function generateTagsListProtected($tag_mapping_id, $tag_mapping_table): string
     {
         $zen_tags_list = '';
         $current_tags = $GLOBALS['db']->Execute(
@@ -197,7 +197,7 @@ class ZenTags extends base
     // Called when an item's tags are to be updated.  The 'zen_tags' POST variable is set up in this 
     // class' generateTagInputsProtected function (above).
     //
-    protected function updateTagInputsProtected($tag_mapping_id, $tag_mapping_table, $data_override = false)
+    protected function updateTagInputsProtected($tag_mapping_id, $tag_mapping_table, $data_override = false): void
     {
         if (IS_ADMIN_FLAG === true) {
             if ($data_override === false) {
@@ -246,7 +246,7 @@ class ZenTags extends base
         }
     }
 
-    protected function getSubCatsAndProducts($categories_id)
+    protected function getSubCatsAndProducts($categories_id): array
     {
         global $categories_products_id_list;  //-For zen_get_categories_products_list
 
@@ -408,7 +408,7 @@ class ZenTags extends base
     // -----
     // A 'valid' tag-name contains only alphanumeric characters.
     //
-    public function validateTagName($tag_name)
+    public function validateTagName($tag_name): bool
     {
         return ctype_alnum((string)$tag_name);
     }
@@ -507,26 +507,46 @@ class ZenTags extends base
         if (count($tag_array) !== 0) {
             $tag_cloud = '<div class="zenTagCloud">';
             foreach ($tag_array as $current_tag) {
-                $tag_cloud .=
-                    '<span class="zenTag">' .
-                        '<a style="font-size: ' . $current_tag['font_size'] . ';" href="' . zen_href_link(FILENAME_ADVANCED_SEARCH_RESULT, 'tID=' . $current_tag['tag_id'] . '&keyword=' . $current_tag['tag_name']) . '">' .
-                            $current_tag['tag_name'] .
-                        '</a>' .
-                    '</span> ';
+                $tag_cloud .= $this->makeTagLink($current_tag['tag_id'], $current_tag['tag_name'], 'zenTag', 'style="font-size: ' . $current_tag['font_size'] . ';"') . ' ';
             }
             $tag_cloud .= '</div>';
         }
         return $tag_cloud;
     }
 
+    public function getProductTagLinks(int $products_id): string
+    {
+        $tag_array = $this->makeTagCloudArray($products_id);
+        $tag_links = [];
+        foreach ($tag_array as $next_tag) {
+            $tag_links[] = $this->makeTagLink($next_tag['tag_id'], $next_tag['tag_name'], 'zenProductTag');
+        }
+        return implode(' ', $tag_links);
+    }
+
+    // -----
+    // Creates a link to search for a given tag.
+    //
+    protected function makeTagLink(string $tag_id, string $tag_name, string $tag_class, string $parameters = ''): string
+    {
+        return
+            '<span class="' . $tag_class . '">' .
+                '<a ' . $parameters . ' href="' . zen_href_link(FILENAME_ADVANCED_SEARCH_RESULT, 'tID=' . $tag_id . '&keyword=' . $tag_name) . '">' .
+                    $tag_name .
+                '</a>' .
+            '</span>';
+    }
+
     // -----
     // Returns the "Zen Cart Tag Cloud" information in an associative array.
     //
-    public function makeTagCloudArray()
+    public function makeTagCloudArray(int $products_id = 0): array
     {
         $tags = [];
         $minimum_usage = 0;
         $maximum_usage = 0;
+        
+        $where_clause = ($products_id === 0) ? '' : " WHERE t2p.tag_mapping_id = $products_id";
 
         $tag_info = $GLOBALS['db']->Execute(
             "SELECT t.tag_id, t.tag_name, COUNT(t2p.tag_id) as p_count, COUNT(t2c.tag_id) as c_count
@@ -535,6 +555,7 @@ class ZenTags extends base
                         ON t2p.tag_id = t.tag_id
                     LEFT JOIN " . TABLE_TAGS_TO_CATEGORIES . " t2c
                         ON t2c.tag_id = t.tag_id
+               $where_clause
            GROUP BY t.tag_id, t.tag_name"
         );
 
