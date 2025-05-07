@@ -7,7 +7,7 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('ZEN_TAGS_CURRENT_VERSION', '2.0.1-beta1');
+define('ZEN_TAGS_CURRENT_VERSION', '2.0.1');
 define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-05-07');
 
 // -----
