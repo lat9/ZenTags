@@ -49,7 +49,7 @@ class ZenTagsAdminObserver extends base
     protected function updateNotifierAdminZenRemoveProduct(&$class, $eventID, $empty_array, &$product_id)
     {
         $zen_tags = new ZenTags();
-        $zen_tags->removeProductTags($products_id);
+        $zen_tags->removeProductTags($product_id);
     }
 
     // -----
