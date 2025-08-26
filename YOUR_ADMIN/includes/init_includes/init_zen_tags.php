@@ -7,8 +7,8 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('ZEN_TAGS_CURRENT_VERSION', '2.0.1');
-define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-05-07');
+define('ZEN_TAGS_CURRENT_VERSION', '2.0.2-beta1');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-08-26');
 
 // -----
 // Quick return if no admin is currently logged in or the plugin's
@@ -32,15 +32,15 @@ if (!$configuration->EOF) {
     $cgi = $configuration->fields['configuration_group_id'];
 } else {
     $db->Execute(
-        "INSERT INTO " . TABLE_CONFIGURATION_GROUP . " 
-            (configuration_group_title, configuration_group_description, sort_order, visible) 
-         VALUES 
+        "INSERT INTO " . TABLE_CONFIGURATION_GROUP . "
+            (configuration_group_title, configuration_group_description, sort_order, visible)
+         VALUES
             ('$config_group_title', 'Zen Cart Tags Settings', 1, 1)"
     );
     $cgi = $db->Insert_ID(); 
     $db->Execute(
-        "UPDATE " . TABLE_CONFIGURATION_GROUP . " 
-            SET sort_order = $cgi 
+        "UPDATE " . TABLE_CONFIGURATION_GROUP . "
+            SET sort_order = $cgi
           WHERE configuration_group_id = $cgi
           LIMIT 1"
     );
@@ -51,9 +51,9 @@ if (!$configuration->EOF) {
 //
 if (!defined('ZEN_TAGS_VERSION')) {
     $db->Execute(
-        "INSERT INTO " . TABLE_CONFIGURATION . " 
-            (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function) 
-         VALUES 
+        "INSERT INTO " . TABLE_CONFIGURATION . "
+            (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
+         VALUES
             ('Zen Cart &quot;Tags&quot; Installed Version', 'ZEN_TAGS_VERSION', '" . ZEN_TAGS_CURRENT_VERSION . "', 'Displays the Zen Tag plugin\'s current version.', $cgi, 1, now(), NULL, 'zen_cfg_read_only(' ),
 
             ('Enable on Storefront?', 'ZEN_TAGS_ENABLE', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, the default, <em>Zen Tags</em> is enabled on your storefront.', $cgi, 5, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],'),
@@ -88,14 +88,14 @@ if (!defined('ZEN_TAGS_VERSION')) {
     $db->Execute(
         "CREATE TABLE IF NOT EXISTS " . TABLE_TAGS_TO_PRODUCTS . " (
             tag_mapping_id int(11) NOT NULL,
-            tag_id int(11) NOT NULL,  
+            tag_id int(11) NOT NULL,
             PRIMARY KEY (tag_mapping_id,tag_id)
          ) COMMENT = 'The tag_mapping_id contains a products_id'"
     );
     $db->Execute(
         "CREATE TABLE IF NOT EXISTS " . TABLE_TAGS_TO_CATEGORIES . " (
             tag_mapping_id int(11) NOT NULL,
-            tag_id int(11) NOT NULL,  
+            tag_id int(11) NOT NULL,
             PRIMARY KEY (tag_mapping_id,tag_id)
          ) COMMENT = 'The tag_mapping_id contains a categories_id'"
     );
@@ -117,7 +117,7 @@ if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
         case version_compare(ZEN_TAGS_VERSION, '1.0.0', '<'):
             $db->Execute(
                 "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
-                    (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function) 
+                    (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
                  VALUES
                     ('Always Include Tags in Search?', 'ZEN_TAGS_SEARCH_ALWAYS', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, whether a storefront product-search <em>always</em> includes products with tags that match the search <code>keywords</code>.  This setting applies <em>only</em> if tags are enabled for use on your storefront.', $cgi, 6, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
             );
@@ -158,7 +158,7 @@ if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
     }
 
     $db->Execute(
-        "UPDATE " . TABLE_CONFIGURATION . " 
+        "UPDATE " . TABLE_CONFIGURATION . "
             SET configuration_value = '" . ZEN_TAGS_CURRENT_VERSION . "',
                 last_modified = now()
           WHERE configuration_key = 'ZEN_TAGS_VERSION' 
