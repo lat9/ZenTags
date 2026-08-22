@@ -1,14 +1,14 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9 (Cindy Merkin)
-// Copyright (c) 2014-2025 Vinos de Frutas Tropicales
+// Copyright (c) 2014-2026 Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('ZEN_TAGS_CURRENT_VERSION', '2.0.2-beta1');
-define('ZEN_TAGS_LAST_UPDATE_DATE', '2024-08-26');
+define('ZEN_TAGS_CURRENT_VERSION', '2.0.2');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-08-22');
 
 // -----
 // Quick return if no admin is currently logged in or the plugin's
