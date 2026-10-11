@@ -186,9 +186,9 @@ class DbIoProductsTagsHandler extends DbIoHandler
     //
     protected function importFinishProcessing(): void
     {
-        $this->debugMessage("importFinishProcessing for products_id (" . $this->importProductsId . ": " . print_r($this->productTags, true));
+        $this->debugMessage("importFinishProcessing for products_id (" . $this->importProductsId . ": " . print_r($this->productsTags, true));
         if ($this->operation !== 'check') {
-            if (count($this->productsTags) == 0) {
+            if (count($this->productsTags) === 0) {
                 $this->zenTags->removeProductTagsKeepUnused($this->importProductsId);
             } else {
                 foreach ($this->productsTags as $tag_name => $tag_id) {
