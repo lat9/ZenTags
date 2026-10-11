@@ -47,7 +47,7 @@ td, th { padding: 5px; }
 
 <body>
 <h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.8a and later)</h1>
-<h3>Version 2.0.2</h3>
+<h3>Version 2.0.3</h3>
 <p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2026, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
@@ -162,6 +162,7 @@ td, th { padding: 5px; }
 </ol>
 <h3>Database I/O Manager (DbIo) Integration</h3>
 <p><em>ZenTags</em> also provides a <a href="https://www.zen-cart.com/downloads.php?do=file&id=2091" target="_blank"><em>DbIo</em></a> handler to enable easy export and import of your products' tags.</p>
+<p><b>Note:</b> DbIo v2.2.0 or later is required.</p>
 <p>The export creates a 3-column output: <code>v_products_id</code>, <code>v_products_name</code> and <code>v_products_tags</code> &mdash; the <code>v_products_tags</code> contains a <b>^</b>-separated list of current tags for the referenced product.</p>
 <p>On import, only the <code>v_products_id</code> and <code>v_products_tags</code> columns are required/used.  Leave the <code>v_products_tags</code> column empty and <b>all</b> tags associated with the associated product are <em>removed</em>.</p>
 
@@ -206,6 +207,13 @@ td, th { padding: 5px; }
 <hr />
 <h2>Version History:</h2>
 <ul>
+  <li>v2.0.3, 2026-10-11 (lat9)<ul>
+    <li>BUGFIX: Using type declarations, matching the base DbIo v2.2.0; now the minimum required.</li>
+    <li>The following files were changed:<ol>
+        <li>/YOUR_ADMIN/includes/classes/dbio/DbIoProductsTagsHandler.php</li>
+        <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
+    </ol></li>
+  </ul></li>
   <li>v2.0.2, 2026-08-22 (lat9, drbyte)<ul>
     <li>BUGFIX: Correcting PHP Warning when a product is removed during admin processing.</li>
     <li>The following files were changed:<ol>

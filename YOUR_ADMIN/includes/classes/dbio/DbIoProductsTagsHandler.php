@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the ZenTags plugin, created by Cindy Merkin (cindy@vinosdefrutastropicales.com)
-// Copyright (c) 2018-2024, Vinos de Frutas Tropicales.
+// Copyright (c) 2018-2026, Vinos de Frutas Tropicales.
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal access');
@@ -24,7 +24,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     protected int $importProductsId;
     protected $zenTags;
 
-    public static function getHandlerInformation ()
+    public static function getHandlerInformation(): false|array
     {
         if (!defined('TABLE_TAGS_TO_PRODUCTS') || !$GLOBALS['sniffer']->table_exists(TABLE_TAGS_TO_PRODUCTS)) {
             return false;
@@ -32,8 +32,8 @@ class DbIoProductsTagsHandler extends DbIoHandler
 
         DbIoHandler::loadHandlerMessageFile('ProductsTags'); 
         return [
-            'version' => '2.0.0',
-            'handler_version' => '1.4.0',
+            'version' => '2.0.3',
+            'handler_version' => '2.2.0',
             'include_header' => true,
             'export_only' => false,
             'description' => DBIO_PRODUCTSTAGS_DESCRIPTION,
@@ -96,7 +96,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
                FROM " . TABLE_TAGS . " t
                     INNER JOIN " . TABLE_TAGS_TO_PRODUCTS . " t2p
                         ON t2p.tag_id = t.tag_id
-                       AND t2p.tag_mapping_id = " . $fields['products_id'] . "
+                       AND t2p.tag_mapping_id = " . (int)$fields['products_id'] . "
            GROUP BY t2p.tag_mapping_id"
         );
         $fields['products_tags'] = ($tags->EOF) ? '' : $tags->fields['products_tags'];
@@ -108,7 +108,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     // provided by the input CSV file, so that we don't have to keep hitting the database to
     // see if they exist.
     //
-    public function importInitialize($language = 'all', $operation = 'check')
+    public function importInitialize(string $language = 'all', string $operation = 'check'): bool
     {
         $this->tagCache = [];
         $this->zenTags = new ZenTags();
@@ -119,7 +119,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     // -----
     // Some of the exported fields are for information only and aren't importable.
     //
-    protected function importHeaderFieldCheck($field_name)
+    protected function importHeaderFieldCheck(string $field_name): string
     {
         switch ($field_name) {
             case 'products_id':
@@ -144,7 +144,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     // handler's processing requires a pre-existing products_id, so disallow the import if an invalid
     // products_id value was supplied.
     //
-    protected function importCheckKeyValue($data)
+    protected function importCheckKeyValue(array $data): bool
     {
         $this->importProductsId = (int)$this->importGetFieldValue('products_id', $data);
         $import_allowed = !$this->import_is_insert;
@@ -162,7 +162,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     //
     // Note that the current 'products_id' has been saved in 'importProductsId'.
     //
-    protected function importProcessField($table_name, $field_name, $language_id, $field_value)
+    protected function importProcessField(string $table_name, string $field_name, string $language_id, ?string $field_value): void
     {
         $this->debugMessage("ProductsTags::importProcessField($table_name, $field_name, $language_id, $field_value)");
         if ($field_name === 'products_tags') {
@@ -184,7 +184,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
     // 'finish' processing the current CSV import record, if no errors were found in the imported
     // record.
     //
-    protected function importFinishProcessing()
+    protected function importFinishProcessing(): void
     {
         $this->debugMessage("importFinishProcessing for products_id (" . $this->importProductsId . ": " . print_r($this->productTags, true));
         if ($this->operation !== 'check') {
