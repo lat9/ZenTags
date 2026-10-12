@@ -58,7 +58,7 @@ if (!defined('ZEN_TAGS_VERSION')) {
 
             ('Enable on Storefront?', 'ZEN_TAGS_ENABLE', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, the default, <em>Zen Tags</em> is enabled on your storefront.', $cgi, 5, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],'),
 
-            ('Tag Cloud &mdash; Text Size (Smallest)', 'ZEN_TAGS_CLOUD_SMALLEST', '8', 'What text size displays the tag with the smallest usage (the units are given by the <em>Tag Cloud &mdash; Unit</em> setting.', $cgi, 10, now(),  NULL, NULL),
+            ('Tag Cloud &mdash; Text Size (Smallest)', 'ZEN_TAGS_CLOUD_SMALLEST', '8', 'What text size displays the tag with the smallest usage (the units are given by the <em>Tag Cloud &mdash; Unit</em> setting.', $cgi, 10, now(), NULL, NULL),
 
             ('Tag Cloud &mdash; Text Size (Largest)', 'ZEN_TAGS_CLOUD_LARGEST', '22', 'What text size displays the tag with the largest usage (the units are given by the <em>Tag Cloud &mdash; Unit</em> setting.', $cgi, 12, now(), NULL, NULL),
 
