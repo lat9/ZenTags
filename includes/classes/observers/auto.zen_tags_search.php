@@ -1,8 +1,10 @@
 <?php
 // -----
-// Part of the "Zen Tags" plugin for Zen Cart v1.5.8a (and later)
-// Copyright (C) 2018-2024, Vinos de Frutas Tropicales (lat9)
+// Part of the "Zen Tags" plugin for Zen Cart
+// Copyright (C) 2018-2026 Vinos de Frutas Tropicales (lat9)
 // @license https://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+//
+// Last updated: v2.1.0
 //
 class zcObserverZenTagsSearch extends base
 {
@@ -10,10 +12,10 @@ class zcObserverZenTagsSearch extends base
 
     public function __construct()
     {
-        if (defined('ZEN_TAGS_ENABLE') && ZEN_TAGS_ENABLE === 'true') {
+        if (zen_config('ZEN_TAGS_ENABLE') === 'true') {
             $this->tID = (int)($_GET['tID'] ?? '0');
             $this->tID = ($this->tID > 0) ? $this->tID : 0;
-            if ($this->tID !== 0 || (defined('ZEN_TAGS_SEARCH_ALWAYS') && ZEN_TAGS_SEARCH_ALWAYS === 'true')) {
+            if ($this->tID !== 0 || zen_config('ZEN_TAGS_SEARCH_ALWAYS') === 'true') {
                 $this->attach(
                     $this,
                     [

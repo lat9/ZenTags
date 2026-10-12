@@ -14,7 +14,7 @@ define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-10-12');
 // Quick return if no admin is currently logged in or the plugin's
 // already at the current version.
 //
-if (empty($_SESSION['admin_id']) || (defined('ZEN_TAGS_VERSION') && ZEN_TAGS_VERSION === ZEN_TAGS_CURRENT_VERSION)) {
+if (empty($_SESSION['admin_id']) || zen_config('ZEN_TAGS_VERSION') === ZEN_TAGS_CURRENT_VERSION) {
     return;
 }
 
@@ -37,7 +37,7 @@ if (!$configuration->EOF) {
          VALUES
             ('$config_group_title', 'Zen Cart Tags Settings', 1, 1)"
     );
-    $cgi = $db->Insert_ID(); 
+    $cgi = (int)$db->Insert_ID(); 
     $db->Execute(
         "UPDATE " . TABLE_CONFIGURATION_GROUP . "
             SET sort_order = $cgi
@@ -49,7 +49,8 @@ if (!$configuration->EOF) {
 // -----
 // Set the various configuration items, if not previously installed
 //
-if (!defined('ZEN_TAGS_VERSION')) {
+$zen_tags_version = zen_config('ZEN_TAGS_VERSION');
+if ($zen_tags_version === null) {
     $db->Execute(
         "INSERT INTO " . TABLE_CONFIGURATION . "
             (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
@@ -106,15 +107,15 @@ if (!defined('ZEN_TAGS_VERSION')) {
     if (!zen_page_key_exists('configZenTags')) {
         zen_register_admin_page('configZenTags', 'BOX_CONFIGURATION_ZEN_TAGS', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y', $cgi);
     } 
-    define('ZEN_TAGS_VERSION', '0.0.0');
+    $zen_tags_version = '0.0.0';
 }
 
-if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
+if ($zen_tags_version !== ZEN_TAGS_CURRENT_VERSION) {
     switch (true) {
         // -----
         // v1.0.0: Adds configuration setting to identify whether/not to **always** include matching tags in a product-search.
         //
-        case version_compare(ZEN_TAGS_VERSION, '1.0.0', '<'):
+        case version_compare($zen_tags_version, '1.0.0', '<'):
             $db->Execute(
                 "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                     (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
@@ -135,7 +136,7 @@ if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
                    FROM " . TABLE_TAGS
             );
             foreach ($tags as $next_tag) {
-                $trimmed_tag_name = trim($next_tag['tag_name']);
+                $trimmed_tag_name = zen_db_input(trim($next_tag['tag_name']));
                 $db->Execute(
                     "UPDATE " . TABLE_TAGS . "
                         SET tag_name = '$trimmed_tag_name'
@@ -144,7 +145,7 @@ if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
                       LIMIT 1"
                 );
             }
-        case version_compare(ZEN_TAGS_VERSION, '2.0.0', '<'):   //-Fall through from above to continue with updates
+        case version_compare($zen_tags_version, '2.0.0', '<'):   //-Fall through from above to continue with updates
                 $db->Execute(
                     "UPDATE " . TABLE_CONFIGURATION . "
                         SET set_function = 'zen_cfg_read_only(',
@@ -165,7 +166,7 @@ if (ZEN_TAGS_VERSION !== ZEN_TAGS_CURRENT_VERSION) {
           LIMIT 1"
     );
 
-    if (ZEN_TAGS_VERSION === '0.0.0') {
+    if ($zen_tags_version === '0.0.0') {
         $messageStack->add_session(sprintf(ZEN_TAG_INSTALLED, ZEN_TAGS_CURRENT_VERSION), 'success');
     } else {
         $messageStack->add_session(sprintf(ZEN_TAG_UPDATED, ZEN_TAGS_CURRENT_VERSION), 'success');

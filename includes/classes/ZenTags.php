@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the "Zen Tags" plugin by lat9
-// Copyright (c) 2014-2025, Vinos de Frutas Tropicales
+// Copyright (c) 2014-2026, Vinos de Frutas Tropicales
+//
+// Last updated: v2.1.0
 //
 if (!defined ('IS_ADMIN_FLAG')) {
     exit ('Illegal Access');
@@ -31,13 +33,13 @@ class ZenTags
 
     public function __construct()
     {
-        $this->removeUnusedTags = (ZEN_TAGS_REMOVE_IF_NOT_USED === 'true');
-        $this->smallestFont = (int)ZEN_TAGS_CLOUD_SMALLEST;
-        $this->largestFont = (int)ZEN_TAGS_CLOUD_LARGEST;
-        $this->fontUnits = ZEN_TAGS_CLOUD_UNITS;
-        $this->maxTags = (int)ZEN_TAGS_CLOUD_MAX;
-        $this->tagsOrderBy = ZEN_TAGS_ORDER_BY;
-        $this->tagsSortOrder = ZEN_TAGS_SORT_ORDER;
+        $this->removeUnusedTags = zen_config('ZEN_TAGS_REMOVE_IF_NOT_USED') === 'true';
+        $this->smallestFont = (int)zen_config('ZEN_TAGS_CLOUD_SMALLEST');
+        $this->largestFont = (int)zen_config('ZEN_TAGS_CLOUD_LARGEST');
+        $this->fontUnits = zen_config('ZEN_TAGS_CLOUD_UNITS');
+        $this->maxTags = (int)zen_config('ZEN_TAGS_CLOUD_MAX');
+        $this->tagsOrderBy = zen_config('ZEN_TAGS_ORDER_BY');
+        $this->tagsSortOrder = zen_config('ZEN_TAGS_SORT_ORDER');
     }
 
     public function generateCategoryTagInputs($categories_id)

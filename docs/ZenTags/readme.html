@@ -183,6 +183,7 @@ td, th { padding: 5px; }
     <li>/includes/classes/auto.zen_tags_search.php</li>
     <li>/includes/classes/ajax/zcAjaxTagManager.php</li>
     <li>/includes/extra_datafiles/zen_tags_database_names.php</li>
+    <li>/includes/functions/extra_functions/zen_config.php <span class="smaller">(Added in v2.1.0)</span></li>
     <li>/includes/languages/english/extra_definitions/lang.zen_tags_extra_definitions.php</li>
     <li>/includes/modules/pages/product_info/header_php_product_info_zen_tags.php</li>
     <li>/includes/modules/sideboxes/zen_tag_cloud.php</li>
@@ -192,6 +193,7 @@ td, th { padding: 5px; }
     <li>/YOUR_ADMIN/includes/classes/observers/ZenTagsAdminObserver.php</li>
     <li>/YOUR_ADMIN/includes/extra_datafiles/zen_tags_admin_file_database_names.php</li>
     <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
+    <li>/YOUR_ADMIN/includes/functions/extra_functions/zen_config.php <span class="smaller">(Added in v2.1.0)</span></li>
     <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/lang.zen_tags_extra_definitions.php</li>
     <li><span class="removed">/YOUR_ADMIN/includes/languages/english/dbio/DbIoProductsTagsHandler.php</span> <span class="smaller">(Removed in v2.1.0)</span></li>
     <li>/YOUR_ADMIN/includes/languages/english/dbio/lang.DbIoProductsTagsHandler.php <span class="smaller">(Added in v2.1.0)</span></li>
@@ -211,10 +213,20 @@ td, th { padding: 5px; }
   <li>v2.1.0-beta1, 2026-10-12 (lat9)<ul>
     <li>BUGFIX: Using type declarations, matching the base DbIo v2.2.0; now the minimum required.</li>
     <li>BUGFIX: Correct variable name in <code>importFinishProcessing</code>, creating PHP warning.</li>
-    <li>CHANGE: 
+    <li>CHANGE: Use array-based language file, now supported by DbIo v2.2.0; it's a zc300 requirement.</li>
+    <li>CHANGE: Use <code>zen_config</code> when accessing configuration settings.</li>
     <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
+        <li>/includes/classes/observers/auto.zen_tags_search.php</li>
+        <li>/includes/classes/ZenTags.php</li>
+        <li><span class="added">/includes/functions/extra_functions/zen_config.php</span></li>
+        <li>/includes/modules/pages/product_info/header_php_product_info_zen_tags.php</li>
+        <li>/includes/templates/template_default/sideboxes/tpl_zen_tag_cloud.php</li>
         <li>/YOUR_ADMIN/includes/classes/dbio/DbIoProductsTagsHandler.php</li>
+        <li>/YOUR_ADMIN/includes/classes/observers/ZenTagsAdminObserver.php</li>
         <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
+        <li><span class="added">/YOUR_ADMIN/includes/functions/extra_functions/zen_config.php</span></li>
+        <li><span class="removed">/YOUR_ADMIN/includes/languages/english/dbio/DbIoProductsTagsHandler.php</span></li>
+        <li><span class="added">/YOUR_ADMIN/includes/languages/english/dbio/lang.DbIoProductsTagsHandler.php</span></li>
     </ol></li>
   </ul></li>
   <li>v2.0.2, 2026-08-22 (lat9, drbyte)<ul>
