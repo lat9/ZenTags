@@ -13,4 +13,4 @@ if (zen_config('ZEN_TAGS_ENABLE') !== 'true') {
 // See if the current product has any tags defined.
 //
 $product_tags = new ZenTags();
-$product_tags_list = $product_tags->getProductTagLinks((int)$_GET['products_id']);
+$product_tags_list = $product_tags->getProductTagLinks((int)($_GET['products_id'] ?? 0));

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 // -----
 // Part of the "Zen Tags" plugin by Cindy Merkin (lat9)
 // Copyright (c) 2014-2026 Vinos de Frutas Tropicales

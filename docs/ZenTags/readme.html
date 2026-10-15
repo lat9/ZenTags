@@ -51,7 +51,7 @@ td, th { padding: 5px; }
 <p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2026, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
-<hr />
+<hr>
 <h2>What it does</h2>
 <p>This plugin provides enhancements to the base Zen Cart functionality &mdash; supported for Zen Cart v1.5.8a and later (including v2.2.x, v2.3.0 and v3.0.0-dev):</p>
 <ol>
@@ -171,7 +171,7 @@ td, th { padding: 5px; }
 <p><em>ZenTags</em> also enables product-searches to include products with tags that match any search <em>keywords</em>.</p>
 <p>You can also modify your store to display searchable tags for each product sold (on the product's 'information' page, e.g. <code>product_info</code>). The template changes <b>are not distributed</b> in this plugin's zip-file; see <a href="https://github.com/lat9/ZenTags/wiki/Showing-product-tags-on-product-%22information%22-pages" target="_blank">this</a> GitHub Wiki article for the hand-edits required.</p>
 
-<hr />
+<hr>
 <h2>Installation</h2>
 <p>There are no <span class="corefile">core-file overwrites</span> in the plugin, and it makes changes to your database; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
 <p>References to files in the <code>YOUR_ADMIN</code> directory identify changes to be made in files associated with your Zen Cart's &quot;secret admin directory&quot;.</p>
@@ -203,19 +203,21 @@ td, th { padding: 5px; }
   <li>If you plan to use the &quot;Tag Cloud&quot; sidebox, navigate to your admin's <em><b>Tools->Layout Boxes Controller</b></em> to enable and position that sidebox.</li>
 </ol>
 
-<hr />
+<hr>
 <h2>Un-install</h2>
 <p>Delete the <b>new</b> files you copied to your store's file-system, then copy and paste the contents of <code>/docs/ZenTags/uninstall/zen_tags_uninstall.sql</code> into your admin's <em>Tools :: Install SQL Patches</em> to remove the plugin's database changes.  Note that since the <span class="corefile">core-file</span> admin changes can safely be left, since those changes are each the inclusion of a notification only.</p>
 
-<hr />
+<hr>
 <h2>Version History:</h2>
 <ul>
-  <li>v2.1.0-beta1, 2026-10-12 (lat9)<ul>
+  <li>v2.1.0-beta2, 2026-10-15 (lat9)<ul>
     <li>BUGFIX: Using type declarations, matching the base DbIo v2.2.0; now the minimum required.</li>
     <li>BUGFIX: Correct variable name in <code>importFinishProcessing</code>, creating PHP warning.</li>
     <li>CHANGE: Use array-based language file, now supported by DbIo v2.2.0; it's a zc300 requirement.</li>
     <li>CHANGE: Use <code>zen_config</code> when accessing configuration settings.</li>
+    <li>BUGFIX: Harden various classes, using strict-typing.</li>
     <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
+        <li>/includes/classes/ajax/zcAjaxTagManager.php</li>
         <li>/includes/classes/observers/auto.zen_tags_search.php</li>
         <li>/includes/classes/ZenTags.php</li>
         <li><span class="added">/includes/functions/extra_functions/zen_config.php</span></li>
@@ -225,6 +227,7 @@ td, th { padding: 5px; }
         <li>/YOUR_ADMIN/includes/classes/observers/ZenTagsAdminObserver.php</li>
         <li>/YOUR_ADMIN/includes/init_includes/init_zen_tags.php</li>
         <li><span class="added">/YOUR_ADMIN/includes/functions/extra_functions/zen_config.php</span></li>
+        <li>/YOUR_ADMIN/includes/javascript/ajax_tag_list.js</li>
         <li><span class="removed">/YOUR_ADMIN/includes/languages/english/dbio/DbIoProductsTagsHandler.php</span></li>
         <li><span class="added">/YOUR_ADMIN/includes/languages/english/dbio/lang.DbIoProductsTagsHandler.php</span></li>
     </ol></li>

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 // -----
 // Part of the "Zen Tags" plugin by lat9
 // Copyright (c) 2014-2026, Vinos de Frutas Tropicales
@@ -6,7 +8,7 @@
 // Last updated: v2.1.0
 //
 if (!defined ('IS_ADMIN_FLAG')) {
-    exit ('Illegal Access');
+    exit('Illegal Access');
 }
 
 // -----
@@ -42,8 +44,12 @@ class ZenTags
         $this->tagsSortOrder = zen_config('ZEN_TAGS_SORT_ORDER');
     }
 
-    public function generateCategoryTagInputs($categories_id)
+    public function generateCategoryTagInputs(string|int $categories_id): array
     {
+        if (!$this->isAdmin()) {
+            return [];
+        }
+
         $tag_inputs = $this->generateTagInputsProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES);
         if (is_array($tag_inputs)) {
             $tag_inputs['label']['text'] .= ('<br><strong>' . ZEN_TAG_LABEL_NOTE . '</strong> ' . ZEN_TAG_LABEL_CATEGORY_INSTRUCTIONS . '<br>');
@@ -51,10 +57,9 @@ class ZenTags
         return $tag_inputs;
     }
 
-    public function updateCategoryTagInputs($categories_id)
+    public function updateCategoryTagInputs(string|int $categories_id): void
     {
         $this->updateTagInputsProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES);
-        return;
     }
 
     public function generateProductTagInputs($products_id)
@@ -62,16 +67,14 @@ class ZenTags
         return $this->generateTagInputsProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS);
     }
 
-    public function updateProductTagInputs($products_id)
+    public function updateProductTagInputs(string|int $products_id): void
     {
         $this->updateTagInputsProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS);
-        return;
     }
 
-    public function duplicateProductTagInputs($source_products_id, $dup_products_id)
+    public function duplicateProductTagInputs(string|int $source_products_id, string|int $dup_products_id): void
     {
-        $this->updateTagInputsProtected((int)$dup_products_id, TABLE_TAGS_TO_PRODUCTS, $this->getProductTagList($source_products_id));
-        return;
+        $this->updateTagInputsProtected((int)$dup_products_id, TABLE_TAGS_TO_PRODUCTS, $this->getProductTagList((int)$source_products_id));
     }
 
     public function generateTagInputs($tag_mapping_id, $tag_mapping_type)
@@ -80,11 +83,10 @@ class ZenTags
         return $this->generateTagInputsProtected((int)$tag_mapping_id, $tag_mapping_table);
     }
 
-    public function updateTagInputs($tag_mapping_id, $tag_mapping_type)
+    public function updateTagInputs(string|int $tag_mapping_id, $tag_mapping_type)
     {
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
         $this->updateTagInputsProtected((int)$tag_mapping_id, $tag_mapping_table);
-        return;
     }
 
     public function generateTagsList($tag_mapping_id, $tag_mapping_type)
@@ -93,12 +95,12 @@ class ZenTags
         return $this->generateTagsListProtected((int)$tag_mapping_id, $tag_mapping_table);
     }
 
-    public function generateCategoryTagPlaceholder()
+    public function generateCategoryTagPlaceholder(): false|array
     {
         return $this->generateTagPlaceholder(ZEN_TAG_CREATE_CATEGORY_FIRST);
     }
     
-    public function generateProductTagPlaceholder()
+    public function generateProductTagPlaceholder(): false|array
     {
         return $this->generateTagPlaceholder(ZEN_TAG_CREATE_PRODUCT_FIRST);
     }
@@ -109,7 +111,7 @@ class ZenTags
     // 2) The tag remove box, you can individually remove tags one by one.
     // 3) The tag cloud box, you can add tags to the current category/product by clicking a cloud link.
     //
-    protected function generateTagInputsProtected($tag_mapping_id, $tag_mapping_table)
+    protected function generateTagInputsProtected(int $tag_mapping_id, string $tag_mapping_table): false|array
     {
         $tag_inputs = false;
         if (IS_ADMIN_FLAG === true) {
@@ -131,22 +133,22 @@ class ZenTags
         return $tag_inputs;
     }
 
-    protected function generateTagPlaceholder($message)
+    protected function generateTagPlaceholder(string $message): false|array
     {
-        $tag_inputs = false;
-        if (IS_ADMIN_FLAG === true) {
-            $tag_inputs = [
-                'label' => [
-                    'text' => ZEN_TAG_LABEL_TAGS,
-                    'field_name' => 'zen_tags',
-                ],
-                'input' => $message . zen_draw_hidden_field('zen_tags', ''),
-            ];
+        if (!$this->isAdmin()) {
+            return false;
         }
-        return $tag_inputs;
+
+        return [
+            'label' => [
+                'text' => ZEN_TAG_LABEL_TAGS,
+                'field_name' => 'zen_tags',
+            ],
+            'input' => $message . zen_draw_hidden_field('zen_tags', ''),
+        ];
     }
 
-    protected function generateTagsListProtected($tag_mapping_id, $tag_mapping_table): string
+    protected function generateTagsListProtected(int $tag_mapping_id, string $tag_mapping_table): string
     {
         $zen_tags_list = '';
         $current_tags = $GLOBALS['db']->Execute(
@@ -157,12 +159,12 @@ class ZenTags
            ORDER BY t.tag_name ASC"
         );
         foreach ($current_tags as $next_tag) {
-            $zen_tags_list .= (' <span class="tag-list"><a id="tag_id[' . $next_tag['tag_id'] . ']" title="' . ZEN_TAG_TEXT_CLICK_TO_REMOVE_TITLE . '">' . $next_tag['tag_name']) . '</a></span>';
+            $zen_tags_list .= (' <span class="tag-list"><a id="tag_id[' . $next_tag['tag_id'] . ']" href="#" title="' . ZEN_TAG_TEXT_CLICK_TO_REMOVE_TITLE . '">' . $next_tag['tag_name']) . '</a></span>';
         }
         return $zen_tags_list;
     }
 
-    protected function sanitizeTagMappingType($tag_mapping_type)
+    protected function sanitizeTagMappingType(string|int $tag_mapping_type): string
     {
         if ($tag_mapping_type == self::TAG_MAP_PRODUCT) {
             $tag_mapping_table = TABLE_TAGS_TO_PRODUCTS;
@@ -199,56 +201,63 @@ class ZenTags
     // Called when an item's tags are to be updated.  The 'zen_tags' POST variable is set up in this 
     // class' generateTagInputsProtected function (above).
     //
-    protected function updateTagInputsProtected($tag_mapping_id, $tag_mapping_table, $data_override = false): void
+    protected function updateTagInputsProtected(int $tag_mapping_id, string $tag_mapping_table, bool $data_override = false): void
     {
-        if (IS_ADMIN_FLAG === true) {
-            if ($data_override === false) {
-                $zen_tags = $_POST['tag_list'] ?? false;
-            } else {
-                $zen_tags = $data_override;
+        if (!$this->isAdmin()) {
+            return;
+        }
+
+        if ($data_override === false) {
+            $zen_tags = $_POST['tag_list'] ?? false;
+        } else {
+            $zen_tags = $data_override;
+        }
+        if ($zen_tags === false) {
+            return;
+        }
+
+        $sub_cats_and_products = false;
+        if ($tag_mapping_table === TABLE_TAGS_TO_CATEGORIES) {
+            $sub_cats_and_products = $this->getSubCatsAndProducts((int)$tag_mapping_id);
+        }
+        $new_tags = explode(',', str_replace('  ', ' ', $zen_tags));
+        foreach ($new_tags as $current_tag) {
+            $tag_id = $this->tagId($current_tag);
+            if ($tag_id === 0) {
+                continue;
             }
-            if ($zen_tags !== false) {
-                $sub_cats_and_products = false;
-                if ($tag_mapping_table === TABLE_TAGS_TO_CATEGORIES) {
-                    $sub_cats_and_products = $this->getSubCatsAndProducts((int)$tag_mapping_id);
+            $GLOBALS['db']->Execute(
+                "INSERT IGNORE INTO $tag_mapping_table
+                    (tag_mapping_id, tag_id)
+                 VALUES
+                    ($tag_mapping_id, $tag_id)"
+            );
+            if (is_array($sub_cats_and_products)) {
+                if (is_array($sub_cats_and_products['sub_cats'])) {
+                    foreach ($sub_cats_and_products['sub_cats'] as $sub_cat_id) {
+                        $GLOBALS['db']->Execute(
+                            "INSERT IGNORE INTO " . TABLE_TAGS_TO_CATEGORIES . "
+                                (tag_mapping_id, tag_id)
+                             VALUES
+                                ($sub_cat_id, $tag_id)"
+                        );
+                    }
                 }
-                $new_tags = explode(',', str_replace('  ', ' ', $zen_tags));
-                foreach ($new_tags as $current_tag) {
-                    $tag_id = $this->tagId($current_tag);
-                    $GLOBALS['db']->Execute(
-                        "INSERT IGNORE INTO $tag_mapping_table
-                            (tag_mapping_id, tag_id)
-                         VALUES
-                            ($tag_mapping_id, $tag_id)"
-                    );
-                    if (is_array($sub_cats_and_products)) {
-                        if (is_array($sub_cats_and_products['sub_cats'])) {
-                            foreach ($sub_cats_and_products['sub_cats'] as $sub_cat_id) {
-                                $GLOBALS['db']->Execute(
-                                    "INSERT IGNORE INTO " . TABLE_TAGS_TO_CATEGORIES . "
-                                        (tag_mapping_id, tag_id)
-                                     VALUES
-                                        ($sub_cat_id, $tag_id)"
-                                );
-                            }
-                        }
-                        if (is_array($sub_cats_and_products['products'])) {
-                            foreach ($sub_cats_and_products['products'] as $product_id) {
-                                $GLOBALS['db']->Execute(
-                                    "INSERT IGNORE INTO " . TABLE_TAGS_TO_PRODUCTS . "
-                                        (tag_mapping_id, tag_id)
-                                     VALUES
-                                        ($product_id, $tag_id)"
-                                );
-                            }
-                        }
+                if (is_array($sub_cats_and_products['products'])) {
+                    foreach ($sub_cats_and_products['products'] as $product_id) {
+                        $GLOBALS['db']->Execute(
+                            "INSERT IGNORE INTO " . TABLE_TAGS_TO_PRODUCTS . "
+                                (tag_mapping_id, tag_id)
+                             VALUES
+                                ($product_id, $tag_id)"
+                        );
                     }
                 }
             }
         }
     }
 
-    protected function getSubCatsAndProducts($categories_id): array
+    protected function getSubCatsAndProducts(int|string $categories_id): array
     {
         global $categories_products_id_list;  //-For zen_get_categories_products_list
 
@@ -279,23 +288,23 @@ class ZenTags
     // -----
     // Returns the tag list for the specified product.
     //
-    public function getProductTagList($products_id, $separator = ',')
+    public function getProductTagList(int|string $products_id, string $separator = ','): string
     {
-        return $this->getTagListProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS, (string)$separator);
+        return $this->getTagListProtected((int)$products_id, TABLE_TAGS_TO_PRODUCTS, $separator);
     }
 
     // -----
     // Returns the tag list for the specified category.
     //
-    public function getCategoryTagList($categories_id, $separator = ',')
+    public function getCategoryTagList(int|string $categories_id, string $separator = ','): string
     {
-        return $this->getTagListProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES, (string)$separator);
+        return $this->getTagListProtected((int)$categories_id, TABLE_TAGS_TO_CATEGORIES, $separator);
     }
 
     // -----
     // Common function that retrieves the specified tag list.
     //
-    protected function getTagListProtected($tag_mapping_id, $tag_mapping_table, $separator)
+    protected function getTagListProtected(int $tag_mapping_id, string $tag_mapping_table, string $separator): string
     {
         $tags = [];
         $current_tags = $GLOBALS['db']->Execute(
@@ -311,17 +320,20 @@ class ZenTags
         return implode($separator, $tags);
     }
 
-    public function removeProductTagsKeepUnused($products_id)
+    public function removeProductTagsKeepUnused(int|string $products_id): void
     {
-        $this->removeProductTagsProtected($products_id, false);
+        $this->removeProductTagsProtected((int)$products_id, false);
     }
-    public function removeProductTags($products_id)
+    public function removeProductTags(int|string $products_id): void
     {
-        $this->removeProductTagsProtected($products_id, true);
+        $this->removeProductTagsProtected((int)$products_id, true);
     }
-    protected function removeProductTagsProtected($products_id, $remove_unused = true)
+    protected function removeProductTagsProtected(int $products_id, bool $remove_unused = true): void
     {
-       $products_id = (int)$products_id;
+        if (!$this->isAdmin()) {
+            return;
+        }
+
         $GLOBALS['db']->Execute(
             "DELETE FROM " . TABLE_TAGS_TO_PRODUCTS . "
               WHERE tag_mapping_id = $products_id"
@@ -331,8 +343,12 @@ class ZenTags
         }
     }
 
-    public function removeCategoryTags($categories_id)
+    public function removeCategoryTags(int|string $categories_id): void
     {
+        if (!$this->isAdmin()) {
+            return;
+        }
+
         $categories_id = (int)$categories_id;
         $GLOBALS['db']->Execute(
             "DELETE FROM " . TABLE_TAGS_TO_CATEGORIES . "
@@ -341,20 +357,22 @@ class ZenTags
         $this->removeUnusedTagsProtected();
     }
 
-    public function removeTagByType($tag_mapping_id, $tag_id, $tag_mapping_type)
+    public function removeTagByType(int $tag_mapping_id, int $tag_id, int $tag_mapping_type): void
     {
+        if (!$this->isAdmin()) {
+            return;
+        }
+
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
-        $tag_mapping_id = (int)$tag_mapping_id;
-        $tag_id = (int)$tag_id;
         $GLOBALS['db']->Execute(
             "DELETE FROM $tag_mapping_table
               WHERE tag_mapping_id = $tag_mapping_id
                 AND tag_id = $tag_id"
         );
-        if ($tag_mapping_type == self::TAG_MAP_CATEGORY) {
-            $sub_cats_and_products = $this->getSubCatsAndProducts((int)$tag_mapping_id);
+        if ($tag_mapping_type === self::TAG_MAP_CATEGORY) {
+            $sub_cats_and_products = $this->getSubCatsAndProducts($tag_mapping_id);
             if (is_array($sub_cats_and_products)) {
-                if (is_array($sub_cats_and_products['sub_cats']) && count($sub_cats_and_products['sub_cats']) != 0) {
+                if (is_array($sub_cats_and_products['sub_cats']) && count($sub_cats_and_products['sub_cats']) !== 0) {
                     $sub_cat_list = implode(',', $sub_cats_and_products['sub_cats']);
                     $GLOBALS['db']->Execute(
                         "DELETE FROM " . TABLE_TAGS_TO_CATEGORIES . "
@@ -379,11 +397,11 @@ class ZenTags
     // -----
     // Conditionally remove any tags that currently have a usage count of 0.
     //
-    public function removeUnusedTagNames()
+    public function removeUnusedTagNames(): void
     {
         $this->removeUnusedTagsProtected(true);
     }
-    protected function removeUnusedTagsProtected($override = false, $force = false) 
+    protected function removeUnusedTagsProtected(bool $override = false, bool $force = false): void
     {
         if (($override !== false || IS_ADMIN_FLAG === true) && ($force !== false || $this->removeUnusedTags)) {
             $GLOBALS['db']->Execute(
@@ -394,8 +412,12 @@ class ZenTags
         }
     }
 
-    public function addTagMapping($tag_mapping_id, $tag_id, $tag_mapping_type)
+    public function addTagMapping(string|int $tag_mapping_id, string|int $tag_id, string|int $tag_mapping_type): void
     {
+        if (!$this->isAdmin()) {
+            return;
+        }
+
         $tag_mapping_table = $this->sanitizeTagMappingType($tag_mapping_type);
         $tag_mapping_id = (int)$tag_mapping_id;
         $tag_id = (int)$tag_id;
@@ -410,25 +432,25 @@ class ZenTags
     // -----
     // A 'valid' tag-name contains only alphanumeric characters.
     //
-    public function validateTagName($tag_name): bool
+    public function validateTagName(string $tag_name): bool
     {
-        return ctype_alnum((string)$tag_name);
+        return ctype_alnum($tag_name);
     }
 
     // -----
     // Return the tag_id associated with the specified "Tag Name", optionally creating the entry.
     //
-    public function tagIdCheck($tag_name)
+    public function tagIdCheck(string $tag_name): int
     {
         return $this->tagId($tag_name, false);
     }
-    public function tagIdCreate($tag_name)
+    public function tagIdCreate(string $tag_name): int
     {
         return $this->tagId($tag_name, true);
     }
-    protected function tagId($tag_name, $create = true)
+    protected function tagId(string $tag_name, bool $create = true): int
     {
-        $tag_name = zen_db_input($tag_name);
+        $tag_name = zen_db_input(trim($tag_name));
         $tag_info = $GLOBALS['db']->Execute(
             "SELECT tag_id
                FROM " . TABLE_TAGS . "
@@ -437,10 +459,9 @@ class ZenTags
         );
         if (!$tag_info->EOF) {
             $tag_id = $tag_info->fields['tag_id'];
-        } elseif ($create !== true || IS_ADMIN_FLAG !== true) {
+        } elseif ($create !== true || IS_ADMIN_FLAG !== true || empty($tag_name)) {
             $tag_id = 0;
         } else {
-            $tag_name = trim($tag_name);
             $GLOBALS['db']->Execute(
                 "INSERT INTO " . TABLE_TAGS . "
                     (languages_id, tag_name)
@@ -449,13 +470,13 @@ class ZenTags
                 );
             $tag_id = $GLOBALS['db']->Insert_ID();
         }
-        return $tag_id;
+        return (int)$tag_id;
     }
 
     // -----
     // Returns the usage count for the specified "Tag Name".
     //
-    public function tagCountFromName($tag_name)
+    public function tagCountFromName(string $tag_name): int
     {
         return $this->tagCountFromId($this->tagId($tag_name));
     }
@@ -463,7 +484,7 @@ class ZenTags
     // -----
     // Returns the usage count for the specified "Tag ID".
     //
-    public function tagCountFromId($tag_id)
+    public function tagCountFromId(string|int $tag_id): int
     {
         $tag_id = (int)$tag_id;
         $usage_info = $GLOBALS['db']->Execute(
@@ -480,13 +501,13 @@ class ZenTags
               WHERE tag_id = $tag_id"
         );
         $tag_count += $usage_info->fields['count'];
-        return $tag_count;
+        return (int)$tag_count;
     }
 
     // -----
     // Returns the name of the specified tag (or '' if not found).
     //
-    public function getTagName($tag_id)
+    public function getTagName($tag_id): string
     {
         $tag_id = (int)$tag_id;
         $tag_name_info = $GLOBALS['db']->Execute(
@@ -502,7 +523,7 @@ class ZenTags
     // -----
     // Returns the "Zen Cart Tag Cloud" HTML block.
     //
-    public function makeTagCloud()
+    public function makeTagCloud(): string
     {
         $tag_array = $this->makeTagCloudArray();
         $tag_cloud = '';
@@ -562,12 +583,12 @@ class ZenTags
         );
 
         foreach ($tag_info as $next_tag) {
-            $next_tag['count'] = $next_tag['p_count'] + $next_tag['c_count'];
+            $next_tag['count'] = (int)$next_tag['p_count'] + (int)$next_tag['c_count'];
 
-            if ($minimum_usage == 0 || $next_tag['count'] < $minimum_usage) {
+            if ($minimum_usage === 0 || $next_tag['count'] < $minimum_usage) {
                 $minimum_usage = $next_tag['count'];
             }
-            if ($maximum_usage == 0 || $next_tag['count'] > $maximum_usage) {
+            if ($maximum_usage === 0 || $next_tag['count'] > $maximum_usage) {
                 $maximum_usage = $next_tag['count'];
             }
             $tags[] = $next_tag;
@@ -579,7 +600,7 @@ class ZenTags
 
         $tag_cloud_array = [];
         if (count($tags) !== 0) {
-            if ($maximum_usage == 0) {
+            if ($maximum_usage === 0) {
                 $maximum_usage = 1;
             }
             $font_increment = ($this->largestFont - $this->smallestFont) / $maximum_usage;
@@ -600,7 +621,7 @@ class ZenTags
         return $tag_cloud_array;
     }
 
-    protected function sortTagCloud($a, $b)
+    protected function sortTagCloud(array $a, array $b): int
     {
         $sort_field = ($this->tagsOrderBy === 'name') ? 'tag_name' : 'count';
         if ($a[$sort_field] === $b[$sort_field]) {
@@ -609,7 +630,7 @@ class ZenTags
         return ($a[$sort_field] < $b[$sort_field]) ? (($this->tagsSortOrder === 'ASC') ? -1 : 1) : (($this->tagsSortOrder === 'ASC') ? 1 : -1);
     }
 
-    public function getProductIdList($tag_id)
+    public function getProductIdList(string|int $tag_id): string
     {
         $id_array = [];
         $tag_id = (int)$tag_id;
@@ -619,14 +640,13 @@ class ZenTags
               WHERE tag_id = $tag_id"
         );
         foreach ($product_info as $next_product) {
-            if ($next_product['tag_mapping_type'] == self::TAG_MAP_PRODUCT) {
-                $id_array[] = $next_product['tag_mapping_id'];
-            
-            } elseif ($next_product['tag_mapping_type'] == self::TAG_MAP_CATEGORY) {
+            if ((int)$next_product['tag_mapping_type'] === self::TAG_MAP_PRODUCT) {
+                $id_array[] = (int)$next_product['tag_mapping_id'];
+            } elseif ((int)$next_product['tag_mapping_type'] === self::TAG_MAP_CATEGORY) {
                 $categories_products_id_list = [];
                 $categories_products_id_list = zen_get_categories_products_list($next_product['tag_mapping_id']);
                 foreach ($categories_products_id_list as $key => $value) {
-                    $id_array[] = $key;
+                    $id_array[] = (int)$key;
                 }
             }
         }
@@ -636,5 +656,10 @@ class ZenTags
             $id_array = array_unique($id_array);
         }
         return implode(',', $id_array);
+    }
+
+    protected function isAdmin(): bool
+    {
+        return defined('IS_ADMIN_FLAG') && IS_ADMIN_FLAG === true;
     }
 }

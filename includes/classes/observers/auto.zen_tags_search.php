@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 // -----
 // Part of the "Zen Tags" plugin for Zen Cart
 // Copyright (C) 2018-2026 Vinos de Frutas Tropicales (lat9)
@@ -13,7 +15,7 @@ class zcObserverZenTagsSearch extends base
     public function __construct()
     {
         if (zen_config('ZEN_TAGS_ENABLE') === 'true') {
-            $this->tID = (int)($_GET['tID'] ?? '0');
+            $this->tID = (int)($_GET['tID'] ?? 0);
             $this->tID = ($this->tID > 0) ? $this->tID : 0;
             if ($this->tID !== 0 || zen_config('ZEN_TAGS_SEARCH_ALWAYS') === 'true') {
                 $this->attach(
@@ -52,13 +54,13 @@ class zcObserverZenTagsSearch extends base
 
     protected function updateNotifySearchWhereString(&$class, $eventID, $search_keywords, &$where_str)
     {
-        $where_str .= $this->updateWhereClause($_GET['keyword']);
+        $where_str .= $this->updateWhereClause($_GET['keyword'] ?? '');
     }
 
     protected function updateNotifyAjaxBootstrapSearchClauses(&$class, $eventID, $search_keywords, &$select_clause, &$from_clause, &$where_clause)
     {
         $from_clause .= $this->updateFromClause();
-        $where_clause .= $this->updateWhereClause($_POST['keywords'], strpos($from_clause, 'p2c') !== false);
+        $where_clause .= $this->updateWhereClause($_POST['keywords'], str_contains($from_clause, 'p2c'));
     }
 
     protected function updateFromClause(): string
@@ -80,11 +82,11 @@ class zcObserverZenTagsSearch extends base
         }
 
         $where_clause = ' OR
-                (
-                        p.products_status = 1
-                    AND p.products_id = pd.products_id
-                    AND pd.language_id = ' . (int)$_SESSION['languages_id'] .
-                    $p2c_clause;
+            (
+                    p.products_status = 1
+                AND p.products_id = pd.products_id
+                AND pd.language_id = ' . (int)$_SESSION['languages_id'] .
+                $p2c_clause;
 
         if ($this->tID !== 0) {
             $where_clause .= " AND t2p.tag_id = {$this->tID} AND t2p.tag_mapping_id = p.products_id";

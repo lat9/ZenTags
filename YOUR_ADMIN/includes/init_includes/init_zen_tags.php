@@ -7,8 +7,8 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('ZEN_TAGS_CURRENT_VERSION', '2.1.0-beta1');
-define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-10-12');
+define('ZEN_TAGS_CURRENT_VERSION', '2.1.0-beta2');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-10-15');
 
 // -----
 // Quick return if no admin is currently logged in or the plugin's
@@ -122,29 +122,6 @@ if ($zen_tags_version !== ZEN_TAGS_CURRENT_VERSION) {
                  VALUES
                     ('Always Include Tags in Search?', 'ZEN_TAGS_SEARCH_ALWAYS', 'false', 'Identifies whether (<em>true</em>) or not (<em>false</em>, whether a storefront product-search <em>always</em> includes products with tags that match the search <code>keywords</code>.  This setting applies <em>only</em> if tags are enabled for use on your storefront.', $cgi, 6, now(), NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
             );
-
-            // -----
-            // Previous v1.0.0-beta versions might have allowed either empty tag-names or untrimmed tag names to
-            // be inserted into the 'tags' table.  Clean them up ...
-            //
-            $db->Execute(
-                "DELETE FROM " . TABLE_TAGS . "
-                  WHERE tag_name IN ('', ' ')"
-            );
-            $tags = $db->Execute(
-                "SELECT *
-                   FROM " . TABLE_TAGS
-            );
-            foreach ($tags as $next_tag) {
-                $trimmed_tag_name = zen_db_input(trim($next_tag['tag_name']));
-                $db->Execute(
-                    "UPDATE " . TABLE_TAGS . "
-                        SET tag_name = '$trimmed_tag_name'
-                      WHERE tag_id = {$next_tag['tag_id']}
-                        AND languages_id = {$next_tag['languages_id']}
-                      LIMIT 1"
-                );
-            }
         case version_compare($zen_tags_version, '2.0.0', '<'):   //-Fall through from above to continue with updates
                 $db->Execute(
                     "UPDATE " . TABLE_CONFIGURATION . "
@@ -156,6 +133,44 @@ if ($zen_tags_version !== ZEN_TAGS_CURRENT_VERSION) {
                                                                //-Fall through from above to continue with updates
         default:
             break;
+    }
+
+    // -----
+    // Previous versions might have allowed either empty tag-names or untrimmed tag names to
+    // be inserted into the 'tags' table.  Clean them up ...
+    //
+    $tags = $db->Execute(
+        "SELECT *
+           FROM " . TABLE_TAGS
+    );
+    foreach ($tags as $next_tag) {
+        $trimmed_tag_name = zen_db_input(trim($next_tag['tag_name']));
+        $tag_id = (int)$next_tag['tag_id'];
+        $tag_language_id = (int)$next_tag['languages_id'];
+        if ($trimmed_tag_name === '') {
+            $db->Execute(
+                "DELETE FROM " . TABLE_TAGS . "
+                  WHERE tag_id = $tag_id
+                    AND languages_id = $tag_language_id
+                  LIMIT 1"
+            );
+            $db->Execute(
+                "DELETE FROM " . TABLE_TAGS_TO_CATEGORIES . "
+                  WHERE tag_id = $tag_id"
+            );
+            $db->Execute(
+                "DELETE FROM " . TABLE_TAGS_TO_PRODUCTS . "
+                  WHERE tag_id = $tag_id"
+            );
+            continue;
+        }
+        $db->Execute(
+            "UPDATE " . TABLE_TAGS . "
+                SET tag_name = '$trimmed_tag_name'
+              WHERE tag_id = $tag_id
+                AND languages_id = $tag_language_id
+              LIMIT 1"
+        );
     }
 
     $db->Execute(

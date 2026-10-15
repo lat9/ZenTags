@@ -1,63 +1,54 @@
-jQuery(document).ready(function() {
-    jQuery('#zen-tags-remove-outer').on('click', 'a', function(event)
-    {
+$(function(){
+    $('#zen-tags-remove-outer').on('click', 'a', function(e) {
         var tagData = {
             tag_id: this.id,
-            tag_mapping_id: jQuery('#tag_mapping_id').val(), 
-            tag_mapping_type: jQuery('#tag_mapping_type').val(), 
+            tag_mapping_id: $('#tag_mapping_id').val(), 
+            tag_mapping_type: $('#tag_mapping_type').val(), 
         };
 
-        ztLog2Console('Calling removeTag');
         zcJS.ajax({
             url: "ajax.php?act=ajaxTagManager&method=removeTag",
             data: tagData,
             error: function (jqXHR, textStatus, errorThrown) {
-                ztLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert( ajaxTimeoutErrorMessage );
+                    alert(ajaxTimeoutErrorMessage);
                 }
             },
         }).done(function(response) {
-            jQuery('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
+            $('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
         })
         return false;
     });
 
-    jQuery('#zen-tags-add').on ('click', 'button', function(event)
-    {
+    $('#zen-tags-add').on('click', 'button', function(e) {
        var tagData = {
             tag_id: this.id,
-            tag_mapping_id: jQuery('#tag_mapping_id').val(), 
-            tag_mapping_type: jQuery('#tag_mapping_type').val(), 
-            tag_list: jQuery('#zen-tag-input').val()
+            tag_mapping_id: $('#tag_mapping_id').val(), 
+            tag_mapping_type: $('#tag_mapping_type').val(), 
+            tag_list: $('#zen-tag-input').val()
         };
 
-        ztLog2Console('Calling addTags');
         zcJS.ajax({
             url: "ajax.php?act=ajaxTagManager&method=addTags",
             data: tagData,
             error: function (jqXHR, textStatus, errorThrown) {
-                ztLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
-                    alert( ajaxTimeoutErrorMessage );
+                if (textStatus === 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
                 }
             },
         }).done(function(response) {
-            jQuery('#zen-tag-input').val('').focus();
-            jQuery('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
+            $('#zen-tag-input').val('').focus();
+            $('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
         });
         return false;
     });
 
-    jQuery('#zen-tag-cloud-outer').on('click', 'a.choose', function(event)
-    {  
-        ztLog2Console('Calling makeCloud');
+    $('#zen-tag-cloud-outer').on('click', 'a.choose', function(e) {  
         zcJS.ajax({
             url: "ajax.php?act=ajaxTagManager&method=makeCloud",
             data: '',
             error: function (jqXHR, textStatus, errorThrown) {
-                ztLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert( ajaxTimeoutErrorMessage );
                 }
             },
@@ -71,36 +62,24 @@ jQuery(document).ready(function() {
         return false;
     });
 
-    jQuery('#zen-tag-cloud-outer').on('click', 'a.add_tag', function(event)
-    {
+    $('#zen-tag-cloud-outer').on('click', 'a.add_tag', function(e) {
         var tagData = {
             tag_id: this.id,
-            tag_mapping_id: jQuery('#tag_mapping_id').val(), 
-            tag_mapping_type: jQuery('#tag_mapping_type').val(), 
+            tag_mapping_id: $('#tag_mapping_id').val(), 
+            tag_mapping_type: $('#tag_mapping_type').val(), 
         };
 
-        ztLog2Console('Calling addTagItem');
         zcJS.ajax({
             url: "ajax.php?act=ajaxTagManager&method=addTagItem",
             data: tagData,
             error: function (jqXHR, textStatus, errorThrown) {
-                ztLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
-                    alert( ajaxTimeoutErrorMessage );
+                if (textStatus === 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
                 }
             },
         }).done(function(response) {
-            jQuery('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
+            $('#zen-tags-remove').replaceWith('<div id="zen-tags-remove">'+response.tag_list+'</div>');
         });
         return false;
     });
-
-    function ztLog2Console(message)
-    {
-        if (window.console) {
-            if (typeof(console.log) == 'function') {
-                console.log(message);
-            }
-        }
-    }
 });
