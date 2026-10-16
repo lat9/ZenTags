@@ -47,7 +47,7 @@ td, th { padding: 5px; }
 
 <body>
 <h1>Products' &quot;Tag Cloud&quot; and Enhanced Search Capabilities (for Zen Cart 1.5.8a and later)</h1>
-<h3>Version 2.0.3</h3>
+<h3>Version 2.1.0</h3>
 <p>Created by Cindy Merkin (lat9). Copyright (C) 2014-2026, <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>.</p>
 <p>Current support thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread" target="_blank">here</a>.  This software is provided for your use under the GNU General Public License v2.0.</p>
 
@@ -216,6 +216,7 @@ td, th { padding: 5px; }
     <li>CHANGE: Use array-based language file, now supported by DbIo v2.2.0; it's a zc300 requirement.</li>
     <li>CHANGE: Use <code>zen_config</code> when accessing configuration settings.</li>
     <li>BUGFIX: Harden various classes, using strict-typing.</li>
+    <li>BUGFIX: Correct DbIo export, supplying only products with defined tags.</li>
     <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
         <li>/includes/classes/ajax/zcAjaxTagManager.php</li>
         <li>/includes/classes/observers/auto.zen_tags_search.php</li>

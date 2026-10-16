@@ -32,7 +32,7 @@ class DbIoProductsTagsHandler extends DbIoHandler
 
         DbIoHandler::loadHandlerMessageFile('ProductsTags'); 
         return [
-            'version' => '2.0.3',
+            'version' => '2.1.0',
             'handler_version' => '2.2.0',
             'include_header' => true,
             'export_only' => false,
@@ -99,7 +99,16 @@ class DbIoProductsTagsHandler extends DbIoHandler
                        AND t2p.tag_mapping_id = " . (int)$fields['products_id'] . "
            GROUP BY t2p.tag_mapping_id"
         );
-        $fields['products_tags'] = ($tags->EOF) ? '' : $tags->fields['products_tags'];
+
+        // -----
+        // If no tags exist for the current product, don't output a
+        // record to the exported CSV file.
+        //
+        if ($tags->EOF) {
+            return false;
+        }
+
+        $fields['products_tags'] = $tags->fields['products_tags'];
         return parent::exportPrepareFields($fields);
     }
 
