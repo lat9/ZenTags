@@ -7,8 +7,8 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die ('Illegal Access');
 }
 
-define('ZEN_TAGS_CURRENT_VERSION', '2.1.0-beta2');
-define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-10-15');
+define('ZEN_TAGS_CURRENT_VERSION', '2.1.0');
+define('ZEN_TAGS_LAST_UPDATE_DATE', '2026-11-06');
 
 // -----
 // Quick return if no admin is currently logged in or the plugin's

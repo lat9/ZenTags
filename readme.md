@@ -1,8 +1,8 @@
 # Zen Cart Product Tags &mdash; for Zen Cart 1.5.8a and later
 
-Zen Cart Support Thread: https://www.zen-cart.com/showthread.php?225968-Zen-Cart-Product-Tags-(and-Tag-Cloud)-Support-Thread
+Zen Cart Support Thread: https://www.zen-cart.com/threads/202328
 
-Zen Cart Download: https://www.zen-cart.com/downloads.php?do=file&id=2262
+Zen Cart Download: https://www.zen-cart.com/plugins/zen-cart-product-tags-and-tag-cloud-vb2262
 
 _ZenTags_ provides enhancements to the base Zen Cart functionality:
 
